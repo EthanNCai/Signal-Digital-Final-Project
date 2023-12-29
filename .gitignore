@@ -5,7 +5,7 @@
 
 # Ignore build artifacts and dependencies in Front-End folder
 /Front-End/ds_finals/node_modules/
-# /Front-End/ds_finals/build/
+/Front-End/ds_finals/build/
 
 # Ignore other files or folders specific to your project
 
