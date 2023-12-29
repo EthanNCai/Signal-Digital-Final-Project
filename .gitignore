@@ -1,0 +1,27 @@
+# Ignore Django-related files in Back-End folder
+/Back-End/ds_finals/__pycache__/
+/Back-End/ds_finals/db.sqlite3
+/Back-End/ds_finals/media/
+
+# Ignore build artifacts and dependencies in Front-End folder
+/Front-End/ds_finals/node_modules/
+/Front-End/ds_finals/build/
+
+# Ignore other files or folders specific to your project
+
+# Example:
+/Back-End/ds_finals/secret_key.txt
+/Front-End/ds_finals/.env
+
+
+# Ignore PyCharm-related files and folders
+/.idea/
+/.vscode/
+/.venv/
+/*.iml
+/*.ipr
+/*.iws
+
+# Ignore PyCharm project settings
+/.idea/workspace.xml
+/.idea/*.xml
