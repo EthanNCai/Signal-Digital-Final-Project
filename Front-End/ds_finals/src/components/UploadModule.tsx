@@ -2,6 +2,7 @@ import React from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { message, Upload } from "antd";
+import { Box } from "@mui/material";
 
 const { Dragger } = Upload;
 
@@ -25,13 +26,15 @@ const props: UploadProps = {
   },
 };
 
-const App: React.FC = () => (
-  <Dragger {...props}>
-    <p className="ant-upload-drag-icon">
-      <InboxOutlined />
-    </p>
-    <p className="ant-upload-text">点击或者拖动图片来上传</p>
-  </Dragger>
+const UploadModule: React.FC = () => (
+  <Box>
+    <Dragger {...props}>
+      <p className="ant-upload-drag-icon">
+        <InboxOutlined />
+      </p>
+      <p className="ant-upload-text">点击或者拖动图片来上传</p>
+    </Dragger>
+  </Box>
 );
 
-export default App;
+export default UploadModule;

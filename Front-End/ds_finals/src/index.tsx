@@ -1,7 +1,20 @@
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import UploadPage from "./pages/UploadPage";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ProcessPage from "./pages/ProcessPage";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <UploadPage />,
+  },
+  {
+    path: "/process",
+    element: <ProcessPage />,
+  },
+]);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-root.render(<App />);
+root.render(<RouterProvider router={router} />);
