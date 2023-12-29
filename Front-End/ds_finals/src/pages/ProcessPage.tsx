@@ -1,6 +1,7 @@
 import { Box, Container, Stack, Paper } from "@mui/material";
 import ControllerModule from "../components/ControllerModule";
-
+import { Delete } from "@mui/icons-material";
+import { ChartContainer, BarPlot } from "@mui/x-charts";
 function ProcessPage() {
   return (
     <>
@@ -15,7 +16,6 @@ function ProcessPage() {
           alignItems: "center", // Center the content vertically
         }}>
         <Container
-          maxWidth="lg"
           style={{
             display: "flex",
             alignItems: "center",
@@ -24,7 +24,10 @@ function ProcessPage() {
           <Stack
             direction={"row"}
             sx={{ width: "100%", justifyContent: "center" }}>
-            <Box sx={{}}>
+            <Box
+              sx={{
+                position: "relative",
+              }}>
               <img
                 src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2Fd2089adf-e9ad-4904-9c3e-b9901eb95845%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1706457657&t=8925d88f65c87d40164a6c4024a546a9"
                 alt="图片"
@@ -42,9 +45,9 @@ function ProcessPage() {
                 width: "100%",
                 height: "100%",
                 marginX: "20px",
-                backdropFilter: "blur(10px)", // 添加毛玻璃效果
-                backgroundColor: "rgba(255, 255, 255, 0.5)", // 背景颜色和透明度
-                borderRadius: "10px", // 添加圆角
+                backdropFilter: "blur(10px)",
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: "10px",
               }}>
               <ControllerModule />
             </Paper>
