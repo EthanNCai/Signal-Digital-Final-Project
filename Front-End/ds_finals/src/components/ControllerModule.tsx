@@ -1,10 +1,7 @@
-import { Box, Button, Slider, Stack, Chip, IconButton } from "@mui/material";
+import { Box, Slider, Stack, Chip } from "@mui/material";
 import { BezierSplineEditor } from "react-bezier-spline-editor/react";
 
-// 或者单独安装使用
-import { ChartContainer, BarPlot } from "@mui/x-charts";
 import { useState } from "react";
-import { Delete, Download, ForkLeft, Home } from "@mui/icons-material";
 
 function ControllerModule() {
   type Point = {
@@ -49,66 +46,38 @@ function ControllerModule() {
       <Stack direction={"row"}>
         <Box sx={{ margin: "30px" }}>
           <Box sx={{ paddingTop: "20px" }}>
-            <Chip label="曝光度" size="small" />
-
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-
-            <Chip label="光感" size="small" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-            <Chip label="对比度" size="small" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-            <Chip label="锐化" size="small" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-            <Chip label="平滑" size="small" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-            <Chip label="色温" size="small" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-            <Chip label="色调" size="small" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-            <Chip label="饱和度" size="small" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" size="small" />
-          </Box>
-          <Box>
-            <Button sx={{ margin: "5px" }} variant="contained">
-              直方图均衡化
-            </Button>
-            <Button sx={{ margin: "5px" }} variant="contained">
-              平滑图像
-            </Button>
-            <Button sx={{ margin: "5px" }} variant="outlined">
-              左转
-            </Button>
-            <Button sx={{ margin: "5px" }} variant="outlined">
-              右转
-            </Button>
-          </Box>
-          <Box>
-            <IconButton>
-              <Home />
-            </IconButton>
-            <IconButton>
-              <Download />
-            </IconButton>
+            <Chip label="曝光度" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Chip label="光感" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Chip label="对比度" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Chip label="锐化" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Chip label="平滑" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Chip label="色温" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Chip label="色调" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Chip label="饱和度" />
+            <Slider defaultValue={50} valueLabelDisplay="auto" />
           </Box>
         </Box>
-        <Box sx={{ margin: "15px" }}>
+        <Box sx={{ marginTop: "85px" }}>
           <Box
             sx={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              //backdropFilter: "blur(10px)", // 添加毛玻璃效果
-              backgroundColor: "rgba(255, 255, 255, 0)", // 背景颜色和透明度
-              borderRadius: "10px", // 添加圆角
-              marginRight: "50px",
             }}>
-            <Box padding={"10px"}>
+            <Box marginRight={"20px"}>
               <Chip label="红色通道曲线" size="small" />
               <BezierSplineEditor
                 showPoints={false}
                 indicatorSpeed={100}
-                width={150}
-                height={150}
+                width={100}
+                height={100}
                 points={points}
                 onPointsChange={setPoints}
                 controlPointProps={red_circle}
@@ -122,8 +91,8 @@ function ControllerModule() {
               <BezierSplineEditor
                 showPoints={false}
                 indicatorSpeed={100}
-                width={150}
-                height={150}
+                width={100}
+                height={100}
                 points={points2}
                 onPointsChange={setPoints2}
                 controlPointProps={green_circle}
@@ -137,8 +106,8 @@ function ControllerModule() {
               <BezierSplineEditor
                 showPoints={false}
                 indicatorSpeed={100}
-                width={150}
-                height={150}
+                width={100}
+                height={100}
                 points={points3}
                 onPointsChange={setPoints3}
                 controlPointProps={blue_circle}
