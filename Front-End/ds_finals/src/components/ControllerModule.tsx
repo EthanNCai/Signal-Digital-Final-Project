@@ -1,9 +1,9 @@
 import { Box, Slider, Stack, Chip } from "@mui/material";
 import { BezierSplineEditor } from "react-bezier-spline-editor/react";
-
-import { useState } from "react";
-
-function ControllerModule() {
+import { Parameter_Dict } from "../types/interfaces";
+import React, { useState, useContext } from "react";
+import { ParameterContext } from "../types/interfaces";
+const ControllerModule: React.FC = () => {
   type Point = {
     x: number;
     y: number;
@@ -18,6 +18,24 @@ function ControllerModule() {
   const [points2, setPoints2] = useState<Point[]>(initial_points);
   const [points3, setPoints3] = useState<Point[]>(initial_points);
 
+  const { exposure, contrast, setExposure, setContrast, sendRequest } =
+    useContext(ParameterContext);
+  const handleExposureChange = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === "number") {
+      setExposure(newValue);
+    }
+  };
+  const handleContrastChangeCommitted = () => {
+    sendRequest(); // 在滑块值变化被松开后调用 sendRequest 函数
+  };
+  const handleContrastChange = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === "number") {
+      setContrast(newValue);
+    }
+  };
+  const handleExposureChangeCommitted = () => {
+    sendRequest(); // 在滑块值变化被松开后调用 sendRequest 函数
+  };
   return (
     <>
       <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
@@ -25,10 +43,28 @@ function ControllerModule() {
         <Box sx={{ margin: "30px" }}>
           <Box sx={{ paddingTop: "20px" }}>
             <Chip label="曝光度" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" />
-            <Chip label="光感" />
-            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Slider
+              value={exposure}
+              min={-10}
+              max={10}
+              step={1}
+              defaultValue={0}
+              valueLabelDisplay="auto"
+              onChange={handleExposureChange}
+              onChangeCommitted={handleExposureChangeCommitted}
+            />
             <Chip label="对比度" />
+            <Slider
+              value={contrast}
+              min={-10}
+              max={10}
+              step={1}
+              defaultValue={0}
+              valueLabelDisplay="auto"
+              onChange={handleContrastChange}
+              onChangeCommitted={handleContrastChangeCommitted}
+            />
+            <Chip label="光感" />
             <Slider defaultValue={50} valueLabelDisplay="auto" />
             <Chip label="锐化" />
             <Slider defaultValue={50} valueLabelDisplay="auto" />
@@ -116,6 +152,6 @@ function ControllerModule() {
       </Stack>
     </>
   );
-}
+};
 
 export default ControllerModule;

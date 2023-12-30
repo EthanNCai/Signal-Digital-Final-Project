@@ -1,0 +1,21 @@
+{
+  "img_token": "",
+  "exposure": 0,
+  "contrast": 0,
+  "sharpness": 0,
+  "color_temperature": 0,
+  "hue": 0,
+  "lightness": 0,
+  "saturation": 0,
+  "smoothing": 0,
+  "r_curve": [0, 0, 0, 0, 0, 0, 0, 0],
+  "g_curve": [0, 0, 0, 0, 0, 0, 0, 0],
+  "b_curve": [0, 0, 0, 0, 0, 0, 0, 0],
+  "histeq": false,
+  "left_turn": false,
+  "right_turn": false,
+  "crop": false,
+  "crop_arg": [0, 0, 0, 0],
+  "text": false,
+  "text_coordinate": [0, 0]
+}
