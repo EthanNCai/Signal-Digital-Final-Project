@@ -8,37 +8,15 @@ function ControllerModule() {
     x: number;
     y: number;
   };
-  const [points, setPoints] = useState<Point[]>([
+  const initial_points: Point[] = [
     { x: 0, y: 0 },
     { x: 0.25, y: 0.25 },
     { x: 0.75, y: 0.75 },
     { x: 1, y: 1 },
-  ]);
-  const [points2, setPoints2] = useState<Point[]>([
-    { x: 0, y: 0 },
-    { x: 0.25, y: 0.25 },
-    { x: 0.75, y: 0.75 },
-    { x: 1, y: 1 },
-  ]);
-  const [points3, setPoints3] = useState<Point[]>([
-    { x: 0, y: 0 },
-    { x: 0.25, y: 0.25 },
-    { x: 0.75, y: 0.75 },
-    { x: 1, y: 1 },
-  ]);
-  const blue_circle: React.SVGProps<SVGCircleElement> = {
-    r: 5, // 圆的半径
-    fill: "#6DB9EF", // 填充颜色
-  };
-  const red_circle: React.SVGProps<SVGCircleElement> = {
-    r: 5, // 圆的半径
-    fill: "#EF4040", // 填充颜色
-  };
-  const green_circle: React.SVGProps<SVGCircleElement> = {
-    r: 5, // 圆的半径
-    fill: "#65B741", // 填充颜色
-  };
-  const nothing: React.SVGProps<SVGCircleElement> = { r: 0 };
+  ];
+  const [points, setPoints] = useState<Point[]>(initial_points);
+  const [points2, setPoints2] = useState<Point[]>(initial_points);
+  const [points3, setPoints3] = useState<Point[]>(initial_points);
 
   return (
     <>
@@ -71,7 +49,7 @@ function ControllerModule() {
               justifyContent: "center",
               alignItems: "center",
             }}>
-            <Box marginRight={"20px"}>
+            <Box marginRight={"40px"}>
               <Chip label="红色通道曲线" size="small" />
               <BezierSplineEditor
                 showPoints={false}
@@ -80,9 +58,15 @@ function ControllerModule() {
                 height={100}
                 points={points}
                 onPointsChange={setPoints}
-                controlPointProps={red_circle}
-                anchorPointProps={red_circle}
-                indicatorProps={nothing}
+                controlPointProps={{
+                  r: 5,
+                  fill: "#EF4040", //red
+                }}
+                anchorPointProps={{
+                  r: 5,
+                  fill: "#EF4040", //red
+                }}
+                indicatorProps={{ r: 0 }}
               />
 
               <Box margin={"20px"} />
@@ -95,9 +79,15 @@ function ControllerModule() {
                 height={100}
                 points={points2}
                 onPointsChange={setPoints2}
-                controlPointProps={green_circle}
-                anchorPointProps={green_circle}
-                indicatorProps={nothing}
+                controlPointProps={{
+                  r: 5,
+                  fill: "#65B741", //green
+                }}
+                anchorPointProps={{
+                  r: 5,
+                  fill: "#65B741", //green
+                }}
+                indicatorProps={{ r: 0 }}
               />
 
               <Box margin={"20px"} />
@@ -110,9 +100,15 @@ function ControllerModule() {
                 height={100}
                 points={points3}
                 onPointsChange={setPoints3}
-                controlPointProps={blue_circle}
-                anchorPointProps={blue_circle}
-                indicatorProps={nothing}
+                controlPointProps={{
+                  r: 5,
+                  fill: "#6DB9EF", //blue
+                }}
+                anchorPointProps={{
+                  r: 5,
+                  fill: "#6DB9EF", //blue
+                }}
+                indicatorProps={{ r: 0 }}
               />
             </Box>
           </Box>

@@ -1,10 +1,20 @@
 import { Box, Container, Stack, Paper } from "@mui/material";
 import ControllerModule from "../components/ControllerModule";
-
+import { useState } from "react";
 import SPControllerModule from "../components/SPControllerModule";
 import { Typography } from "antd";
+import { Md5 } from "../types/interfaces";
 const { Title, Paragraph } = Typography;
-function ProcessPage() {
+
+const ProcessPage: React.FC = () => {
+  const [md5, setMd5] = useState<string>("");
+  const [imageurl, setImageurl] = useState<string>(
+    "https://s1.hdslb.com/bfs/static/laputa-search/client/assets/nodata.67f7a1c9.png"
+  );
+  const ReceivingMd5 = (md5: string) => {
+    setMd5(md5);
+    setImageurl(`http://127.0.0.1:8000/api/load_image/${md5}`);
+  };
   return (
     <>
       <Box
@@ -14,8 +24,8 @@ function ProcessPage() {
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center center",
           height: "100vh",
-          display: "flex", // Add display flex to center the content vertically
-          alignItems: "center", // Center the content vertically
+          display: "flex",
+          alignItems: "center",
         }}>
         <Container
           style={{
@@ -46,7 +56,7 @@ function ProcessPage() {
                   backgroundColor: "rgba(255, 255, 255, 0.5)",
                   borderRadius: "10px",
                 }}>
-                <SPControllerModule />
+                <SPControllerModule md5={md5} onMd5Change={ReceivingMd5} />
               </Paper>
               <Box
                 sx={{
@@ -55,7 +65,7 @@ function ProcessPage() {
                   minWidth: "40%",
                 }}>
                 <img
-                  src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2Fd2089adf-e9ad-4904-9c3e-b9901eb95845%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1706457657&t=8925d88f65c87d40164a6c4024a546a9"
+                  src={imageurl}
                   alt="图片"
                   style={{
                     maxWidth: "100%",
@@ -83,6 +93,6 @@ function ProcessPage() {
       </Box>
     </>
   );
-}
+};
 
 export default ProcessPage;

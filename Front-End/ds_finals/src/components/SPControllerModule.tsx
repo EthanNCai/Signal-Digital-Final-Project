@@ -8,15 +8,12 @@ import {
   ButtonGroup,
   TextField,
 } from "@mui/material";
-
+import { Md5 } from "../types/interfaces";
 import * as React from "react";
-// 或者单独安装使用
-
 import { Download, GitHub, Home } from "@mui/icons-material";
-function valuetext(value: number) {
-  return `${value}°C`;
-}
-function SPControllerModule() {
+import UploadModule from "./UploadModule";
+
+const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
   const [value, setValue] = React.useState<number[]>([20, 37]);
 
   const handleChange = (event: Event, newValue: number | number[]) => {
@@ -27,13 +24,11 @@ function SPControllerModule() {
   const handleChange2 = (event: Event, newValue: number | number[]) => {
     setValue2(newValue as number[]);
   };
-
   return (
     <>
       <Box sx={{ margin: "30px" }}>
         <Box marginX={"10px"}>
           <Chip label="裁切" />
-
           <Stack direction={"row"}>
             <Box sx={{ minWidth: "80%" }}>
               <Slider
@@ -41,17 +36,15 @@ function SPControllerModule() {
                 value={value}
                 onChange={handleChange}
                 valueLabelDisplay="auto"
-                getAriaValueText={valuetext}
               />
               <Slider
                 getAriaLabel={() => "Temperature range"}
                 value={value2}
                 onChange={handleChange2}
                 valueLabelDisplay="auto"
-                getAriaValueText={valuetext}
               />
             </Box>
-            <Box sx={{ marginX: "10px" }}>
+            <Box sx={{ marginX: "15px" }}>
               <Button variant="contained">应用</Button>
               <Button>预览裁切</Button>
             </Box>
@@ -76,7 +69,7 @@ function SPControllerModule() {
                 color="warning"
               />
             </Box>
-            <Box sx={{ marginX: "10px" }}>
+            <Box sx={{ marginX: "15px" }}>
               <Button variant="contained">应用</Button>
               <Button>预览位置</Button>
             </Box>
@@ -91,6 +84,10 @@ function SPControllerModule() {
             <Button variant="outlined">右转</Button>
           </ButtonGroup>
         </Box>
+        <Box sx={{ marginTop: "10px" }}>
+          <UploadModule md5={md5} onMd5Change={onMd5Change} />
+        </Box>
+
         <Box sx={{ margin: "10px" }}>
           <IconButton>
             <Home />
@@ -105,6 +102,6 @@ function SPControllerModule() {
       </Box>
     </>
   );
-}
+};
 
 export default SPControllerModule;

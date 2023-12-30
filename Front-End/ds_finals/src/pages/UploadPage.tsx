@@ -27,9 +27,7 @@ function UploadPage() {
             backdropFilter: "blur(4px)",
             backgroundColor: "rgba(255, 255, 255, 0.8)",
             borderRadius: "10px",
-          }}>
-          <UploadModule />
-        </Box>
+          }}></Box>
       </Container>
     </Box>
   );
