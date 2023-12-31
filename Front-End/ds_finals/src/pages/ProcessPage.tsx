@@ -7,9 +7,14 @@ import { ParameterContext, Parameter_Dict } from "../types/interfaces";
 const { Title, Paragraph } = Typography;
 
 const ProcessPage: React.FC = () => {
-  var parameter: Parameter_Dict = { brightness: 0, contrast: 0 };
-  const [exposure, setExposure] = useState(0);
+  var parameter: Parameter_Dict = {
+    brightness: 0,
+    contrast: 0,
+    crop_arg: [0, 0, 100, 100],
+  };
+  const [brightness, setExposure] = useState(0);
   const [contrast, setContrast] = useState(0);
+  const [crop_arg, serCrop_arg] = useState([0, 0, 100, 100]);
   const [md5, setMd5] = useState<string>("");
   const [imageurl, setImageurl] = useState<string>(
     "https://s1.hdslb.com/bfs/static/laputa-search/client/assets/nodata.67f7a1c9.png"
@@ -20,7 +25,7 @@ const ProcessPage: React.FC = () => {
   };
 
   const sendRequest = () => {
-    parameter.brightness = exposure;
+    parameter.brightness = brightness;
     parameter.contrast = contrast;
     fetch(`http://127.0.0.1:8000/api/image_operation/${md5}`, {
       method: "POST",
@@ -34,14 +39,22 @@ const ProcessPage: React.FC = () => {
         const imageUrl = URL.createObjectURL(blob);
         setTimeout(() => {
           setImageurl(imageUrl);
-        }, 50); // 设置延迟时间，单位为毫秒
+        }, 50);
       });
   };
   return (
     <>
       {" "}
       <ParameterContext.Provider
-        value={{ exposure, contrast, setExposure, setContrast, sendRequest }}>
+        value={{
+          brightness,
+          contrast,
+          crop_arg,
+          setExposure,
+          setContrast,
+          sendRequest,
+          serCrop_arg,
+        }}>
         <Box
           sx={{
             backgroundImage: `url(https://logincdn.msauth.net/shared/1.0/content/images/appbackgrounds/49_6ffe0a92d779c878835b40171ffc2e13.jpg)`,
@@ -86,24 +99,41 @@ const ProcessPage: React.FC = () => {
                   }}>
                   <SPControllerModule md5={md5} onMd5Change={ReceivingMd5} />
                 </Paper>
-                <Box
-                  sx={{
-                    position: "relative",
-                    margin: "15px",
-                    maxWidth: "30%",
-                    minWidth: "30%",
-                  }}>
-                  <img
-                    src={imageurl}
-                    alt="图片"
-                    style={{
+                <Box sx={{ maxWidth: "25%" }}>
+                  <Box
+                    sx={{
+                      position: "relative",
+                      margin: "15px",
+                      width: "auto",
+                      height: "auto",
                       maxWidth: "100%",
                       borderRadius: "10px",
                       boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-                    }}
-                  />
+                    }}>
+                    <img
+                      src={imageurl}
+                      alt="图片"
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                      }}
+                    />
+                    <div
+                      style={{
+                        content: '""',
+                        position: "absolute",
+                        top: `${100 - crop_arg[3]}%`,
+                        left: `${crop_arg[0]}%`,
+                        right: `${100 - crop_arg[2]}%`,
+                        bottom: `${crop_arg[1]}%`,
+                        backgroundColor: "rgba(188, 255, 255, 0.5)", // 设置半透明的背景颜色
+                        borderRadius: "10px",
+                      }}></div>
+                  </Box>
                 </Box>
-
                 <Paper
                   elevation={10}
                   sx={{

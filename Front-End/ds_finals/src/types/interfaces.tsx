@@ -8,21 +8,26 @@ export type Md5 = {
 export interface Parameter_Dict {
   brightness: number;
   contrast: number;
+  crop_arg: number[];
 }
 
 export {};
 
 type ParameterContextType = {
-  exposure: number;
+  brightness: number;
   contrast: number;
+  crop_arg: number[];
   setExposure: React.Dispatch<React.SetStateAction<number>>;
   setContrast: React.Dispatch<React.SetStateAction<number>>;
   sendRequest: (params?: any) => void;
+  serCrop_arg: (params?: any) => void;
 };
 export const ParameterContext = createContext<ParameterContextType>({
-  exposure: 0,
+  brightness: 0,
   contrast: 0,
+  crop_arg: [0, 0, 0, 0],
   setExposure: () => {},
   setContrast: () => {},
   sendRequest: () => {},
+  serCrop_arg: () => {},
 });

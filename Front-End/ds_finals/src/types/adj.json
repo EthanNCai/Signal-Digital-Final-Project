@@ -1,10 +1,10 @@
 {
   "exposure": 0,
+  "brightness": 0,
   "contrast": 0,
   "sharpness": 0,
   "color_temperature": 0,
   "hue": 0,
-  "brightness": 0,
   "saturation": 0,
   "smoothing": 0,
   "r_curve": [0, 0, 0, 0, 0, 0, 0, 0],

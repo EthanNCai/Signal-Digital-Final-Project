@@ -2,53 +2,71 @@ import {
   Box,
   Button,
   Slider,
-  Stack,
   Chip,
   IconButton,
   ButtonGroup,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Md5 } from "../types/interfaces";
 import * as React from "react";
 import { Download, GitHub, Home } from "@mui/icons-material";
 import UploadModule from "./UploadModule";
-
+import { useContext } from "react";
+import { ParameterContext } from "../types/interfaces";
 const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
-  const [value, setValue] = React.useState<number[]>([20, 37]);
-
-  const handleChange = (event: Event, newValue: number | number[]) => {
-    setValue(newValue as number[]);
+  const { crop_arg, serCrop_arg } = useContext(ParameterContext);
+  const handleyChange = (event: Event, newValue: number | number[]) => {
+    const modifiedNumber = newValue as number[];
+    const outputnumber = [0, 0, 0, 0];
+    outputnumber[0] = crop_arg[0]; //x1
+    outputnumber[1] = modifiedNumber[0]; //y1
+    outputnumber[2] = crop_arg[2]; //x2
+    outputnumber[3] = modifiedNumber[1]; //y2
+    serCrop_arg(outputnumber);
   };
-  const [value2, setValue2] = React.useState<number[]>([20, 37]);
-
-  const handleChange2 = (event: Event, newValue: number | number[]) => {
-    setValue2(newValue as number[]);
+  const handlexChange = (event: Event, newValue: number | number[]) => {
+    const modifiedNumber = newValue as number[];
+    const outputnumber = [0, 0, 0, 0];
+    outputnumber[0] = modifiedNumber[0]; //x1
+    outputnumber[1] = crop_arg[1]; //y1
+    outputnumber[2] = modifiedNumber[1]; //x2
+    outputnumber[3] = crop_arg[3]; //y2
+    serCrop_arg(outputnumber);
   };
+  const xl = crop_arg[0];
+  const yl = crop_arg[1];
+  const xr = crop_arg[2];
+  const yr = crop_arg[3];
   return (
     <>
       <Box sx={{ margin: "30px" }}>
         <Box marginX={"10px"}>
           <Chip label="裁切" />
-          <Stack direction={"row"}>
-            <Box sx={{ minWidth: "80%" }}>
-              <Slider
-                getAriaLabel={() => "Temperature range"}
-                value={value}
-                onChange={handleChange}
-                valueLabelDisplay="auto"
-              />
-              <Slider
-                getAriaLabel={() => "Temperature range"}
-                value={value2}
-                onChange={handleChange2}
-                valueLabelDisplay="auto"
-              />
-            </Box>
-            <Box sx={{ marginX: "15px" }}>
-              <Button variant="contained">应用</Button>
-              <Button>预览裁切</Button>
-            </Box>
-          </Stack>
+
+          <Box sx={{ minWidth: "70%", marginY: "17px" }}>
+            <Typography fontSize={"small"}>横向</Typography>
+            <Slider
+              getAriaLabel={() => "Temperature range"}
+              value={[xl, xr]}
+              onChange={handlexChange}
+              valueLabelDisplay="auto"
+              min={0}
+              max={100}
+            />
+            <Typography fontSize={"small"}>纵向</Typography>
+            <Slider
+              getAriaLabel={() => "Temperature range"}
+              value={[yl, yr]}
+              onChange={handleyChange}
+              valueLabelDisplay="auto"
+              min={0}
+              max={100}
+            />
+
+            <Button variant="contained">应用</Button>
+            <Button>预览裁切</Button>
+          </Box>
 
           <TextField
             sx={{ marginY: "10px" }}
@@ -56,26 +74,28 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
             variant="outlined"
             size="small"
           />
-          <Stack direction={"row"}>
-            <Box sx={{ minWidth: "80%" }}>
-              <Slider
-                defaultValue={50}
-                valueLabelDisplay="auto"
-                color="warning"
-              />
-              <Slider
-                defaultValue={50}
-                valueLabelDisplay="auto"
-                color="warning"
-              />
-            </Box>
-            <Box sx={{ marginX: "15px" }}>
-              <Button variant="contained">应用</Button>
-              <Button>预览位置</Button>
-            </Box>
-          </Stack>
+
+          <Box sx={{ minWidth: "70%", marginY: "17px" }}>
+            <Typography fontSize={"small"}>纵向位置</Typography>
+            <Slider
+              defaultValue={50}
+              valueLabelDisplay="auto"
+              color="warning"
+            />
+            <Typography fontSize={"small"}>横向位置</Typography>
+            <Slider
+              defaultValue={50}
+              valueLabelDisplay="auto"
+              color="warning"
+            />
+          </Box>
+
+          <Button variant="contained" color="warning">
+            应用
+          </Button>
+          <Button color="warning">预览位置</Button>
         </Box>
-        <Box>
+        <Box sx={{ marginTop: "20px" }}>
           <Button sx={{ margin: "5px" }} variant="contained">
             直方图均衡化
           </Button>

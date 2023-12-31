@@ -22,7 +22,7 @@ const ControllerModule: React.FC = () => {
   const [points2, setPoints2] = useState<Point[]>(initial_points);
   const [points3, setPoints3] = useState<Point[]>(initial_points);
   const [hsl, setHsl] = React.useState("female");
-  const { exposure, contrast, setExposure, setContrast, sendRequest } =
+  const { brightness, contrast, setExposure, setContrast, sendRequest } =
     useContext(ParameterContext);
   const handleExposureChange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
@@ -50,7 +50,7 @@ const ControllerModule: React.FC = () => {
         <Box sx={{ margin: "15px" }}>
           <Chip label="亮度" />
           <Slider
-            value={exposure}
+            value={brightness}
             min={-10}
             max={10}
             step={1}
@@ -70,23 +70,59 @@ const ControllerModule: React.FC = () => {
             onChange={handleContrastChange}
             onChangeCommitted={handleContrastChangeCommitted}
           />
-          <Chip label="亮度" />
+          <Chip label="曝光" />
           <Stack direction={"row"}>
-            <Typography fontSize={"small"}>A</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                marginRight: "10px",
+                marginTop: "5px",
+                whiteSpace: "nowrap",
+              }}
+              fontSize="small">
+              属性A
+            </Typography>
             <Slider defaultValue={50} valueLabelDisplay="auto" />
           </Stack>
           <Stack direction={"row"}>
-            <Typography fontSize={"small"}>B</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                marginRight: "10px",
+                marginTop: "5px",
+                whiteSpace: "nowrap",
+              }}
+              fontSize="small">
+              属性B
+            </Typography>
             <Slider defaultValue={50} valueLabelDisplay="auto" />
           </Stack>
 
           <Chip label="锐化" />
           <Stack direction={"row"}>
-            <Typography fontSize={"small"}>A</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                marginRight: "10px",
+                marginTop: "5px",
+                whiteSpace: "nowrap",
+              }}
+              fontSize="small">
+              属性A
+            </Typography>
             <Slider defaultValue={50} valueLabelDisplay="auto" />
           </Stack>
           <Stack direction={"row"}>
-            <Typography fontSize={"small"}>B</Typography>
+            <Typography
+              sx={{
+                display: "inline-block",
+                marginRight: "10px",
+                marginTop: "5px",
+                whiteSpace: "nowrap",
+              }}
+              fontSize="small">
+              属性B
+            </Typography>
             <Slider defaultValue={50} valueLabelDisplay="auto" />
           </Stack>
           <Chip label="平滑" />
@@ -138,11 +174,11 @@ const ControllerModule: React.FC = () => {
               />
             </RadioGroup>
           </FormControl>
-          <Typography>色相</Typography>
+          <Typography fontSize={"xs"}>色相</Typography>
           <Slider defaultValue={50} valueLabelDisplay="auto" />
-          <Typography>饱和度</Typography>
+          <Typography fontSize={"xs"}>饱和度</Typography>
           <Slider defaultValue={50} valueLabelDisplay="auto" />
-          <Typography>亮度</Typography>
+          <Typography fontSize={"xs"}>亮度</Typography>
           <Slider defaultValue={50} valueLabelDisplay="auto" />
         </Box>
         <Box sx={{}}>
