@@ -20,6 +20,7 @@ def upload_image(request):
 
         # construct the saving path and file names
         file_extension = os.path.splitext(file_name)[1]  # 获取文件扩展名
+
         md5_file_name = md5_code + file_extension
         file_path = os.path.join(os.path.dirname(__file__), 'received_img', md5_file_name)
 

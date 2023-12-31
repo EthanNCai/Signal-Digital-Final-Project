@@ -1,13 +1,13 @@
 import { Box, Container, Stack, Paper } from "@mui/material";
 import ControllerModule from "../components/ControllerModule";
-import { useState, createContext } from "react";
+import { useState } from "react";
 import SPControllerModule from "../components/SPControllerModule";
 import { Typography } from "antd";
 import { ParameterContext, Parameter_Dict } from "../types/interfaces";
 const { Title, Paragraph } = Typography;
 
 const ProcessPage: React.FC = () => {
-  var parameter: Parameter_Dict = { exposure: 0, contrast: 0 };
+  var parameter: Parameter_Dict = { brightness: 0, contrast: 0 };
   const [exposure, setExposure] = useState(0);
   const [contrast, setContrast] = useState(0);
   const [md5, setMd5] = useState<string>("");
@@ -20,7 +20,7 @@ const ProcessPage: React.FC = () => {
   };
 
   const sendRequest = () => {
-    parameter.exposure = exposure;
+    parameter.brightness = exposure;
     parameter.contrast = contrast;
     fetch(`http://127.0.0.1:8000/api/image_operation/${md5}`, {
       method: "POST",
@@ -52,7 +52,7 @@ const ProcessPage: React.FC = () => {
           }}>
           <Container
             style={{
-              maxWidth: "70%",
+              maxWidth: "90%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -82,6 +82,7 @@ const ProcessPage: React.FC = () => {
                     backdropFilter: "blur(10px)",
                     backgroundColor: "rgba(255, 255, 255, 0.5)",
                     borderRadius: "10px",
+                    maxWidth: "25%",
                   }}>
                   <SPControllerModule md5={md5} onMd5Change={ReceivingMd5} />
                 </Paper>
@@ -89,7 +90,8 @@ const ProcessPage: React.FC = () => {
                   sx={{
                     position: "relative",
                     margin: "15px",
-                    minWidth: "35%",
+                    maxWidth: "30%",
+                    minWidth: "30%",
                   }}>
                   <img
                     src={imageurl}
@@ -108,6 +110,8 @@ const ProcessPage: React.FC = () => {
                     width: "100%",
                     height: "100%",
                     margin: "15px",
+                    maxWidth: "30%",
+                    minWidth: "30%",
                     backdropFilter: "blur(10px)",
                     backgroundColor: "rgba(255, 255, 255, 0.5)",
                     borderRadius: "10px",

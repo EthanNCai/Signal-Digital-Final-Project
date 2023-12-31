@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 
-image_extensions = ['.jpeg', '.jpg', '.png', '.gif']
+image_extensions = ['.png', '.jpeg', '.jpg']
 
 
 class TargetImage:
@@ -15,9 +15,12 @@ class TargetImage:
             file_path_with_extension = file_path_no_ext + extension
             try:
                 self.image = cv2.imread(file_path_with_extension)
+                if self.image is None:
+                    continue
                 self.image_extension = extension
+                print(file_path_with_extension)
                 break
-            except FileNotFoundError:
+            except Exception:
                 continue
 
     def get_byte_flow_image(self):
@@ -55,16 +58,25 @@ class ImageFactory:
              means user did not touch this operation, so we just skip it
         """
 
-        if self.parameter_dict['exposure'] != 0:
-            image = self.exposure(self.parameter_dict['exposure'], image)
+        if self.parameter_dict['brightness'] != 0:
+            image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:
             image = self.contrast(self.parameter_dict['contrast'], image)
         return image
 
     @staticmethod
-    def exposure(factor, image):
-        # TODO: Add exposure logic here using the 'factor' parameter
-        adjusted_img = cv2.convertScaleAbs(image, alpha=(factor + 10) / 20 * 2)
+    def brightness(factor, image):
+        img = image
+        img_t = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+        h, l, s = cv2.split(img_t)
+        if factor > 0:
+            factor += 40
+        elif factor < 0:
+            factor -= 40
+
+        l_t = np.clip(cv2.add(l, factor), 0, 255)
+        img_hls = cv2.merge((h, l_t, s))
+        adjusted_img = np.clip(cv2.cvtColor(img_hls, cv2.COLOR_HLS2BGR), 0, 255)
         return adjusted_img
 
     @staticmethod
@@ -83,7 +95,8 @@ class ImageFactory:
             contrast = factor + 40
             v[mask] = np.clip(cv2.add(v[mask], contrast), 0, 255).reshape(-1)
         else:
-            v = v
+            return image
         img_hsv = cv2.merge((h, s, v))
         adjusted_img = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2BGR)
         return adjusted_img
+

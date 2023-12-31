@@ -1,5 +1,3 @@
-import React from "react";
-import UploadModule from "../components/UploadModule";
 import { Box, Container } from "@mui/material";
 
 function UploadPage() {

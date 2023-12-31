@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
 
 export type Md5 = {
   md5: string;
@@ -6,7 +6,7 @@ export type Md5 = {
 };
 
 export interface Parameter_Dict {
-  exposure: number;
+  brightness: number;
   contrast: number;
 }
 

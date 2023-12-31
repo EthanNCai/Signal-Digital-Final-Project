@@ -2,7 +2,7 @@
 /Back-End/ds_finals/__pycache__/
 #Back-End/ds_finals/db.sqlite3
 /Back-End/ds_finals/media/
-#/Back-End/ds_finals/ds_app/received_img
+/Back-End/ds_finals/ds_app/received_img
 # Ignore build artifacts and dependencies in Front-End folder
 /Front-End/ds_finals/node_modules/
 /Front-End/ds_finals/build/
