@@ -32,7 +32,9 @@ const ProcessPage: React.FC = () => {
       .then((response) => response.blob())
       .then((blob) => {
         const imageUrl = URL.createObjectURL(blob);
-        setImageurl(imageUrl);
+        setTimeout(() => {
+          setImageurl(imageUrl);
+        }, 50); // 设置延迟时间，单位为毫秒
       });
   };
   return (

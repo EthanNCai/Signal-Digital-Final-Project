@@ -1,9 +1,8 @@
 import os
 import cv2
-from PIL import Image, ImageEnhance
-from io import BytesIO
+import numpy as np
 
-image_extensions = ['.jpeg','.jpg', '.png', '.gif']
+image_extensions = ['.jpeg', '.jpg', '.png', '.gif']
 
 
 class TargetImage:
@@ -73,5 +72,21 @@ class ImageFactory:
     @staticmethod
     def contrast(factor, image):
         # TODO: Add contrast logic here using the 'value' parameter
-        adjusted_img = cv2.convertScaleAbs(image, alpha=(factor + 10) / 20 * 2)
+        img_t = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+        h, s, v = cv2.split(img_t)
+
+        v_median = np.median(v)
+        if factor > 0:
+            mask = v > v_median
+            contrast = factor + 40
+            v[mask] = np.clip(cv2.add(v[mask], contrast), 0, 255).reshape(-1)
+        elif factor < 0:
+            mask = v < v_median
+            contrast = factor + 40
+            v[mask] = np.clip(cv2.add(v[mask], contrast), 0, 255).reshape(-1)
+        else:
+            v = v
+        img_hsv = cv2.merge((h, s, v))
+        adjusted_img = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2BGR)
         return adjusted_img
