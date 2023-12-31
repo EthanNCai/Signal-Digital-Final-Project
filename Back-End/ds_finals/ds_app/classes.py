@@ -14,10 +14,8 @@ class TargetImage:
         for extension in image_extensions:
             file_path_with_extension = file_path_no_ext + extension
             try:
-                print(file_path_with_extension)
                 self.image = cv2.imread(file_path_with_extension)
                 self.image_extension = extension
-                print(file_path_with_extension)
                 break
             except FileNotFoundError:
                 continue
@@ -65,17 +63,16 @@ class ImageFactory:
 
     @staticmethod
     def exposure(factor, image):
-        # TODO: Add exposure logic here using the 'value' parameter
+        # TODO: Add exposure logic here using the 'factor' parameter
         adjusted_img = cv2.convertScaleAbs(image, alpha=(factor + 10) / 20 * 2)
         return adjusted_img
 
     @staticmethod
     def contrast(factor, image):
-        # TODO: Add contrast logic here using the 'value' parameter
+        # TODO: Add contrast logic here using the 'factor' parameter
         img_t = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         h, s, v = cv2.split(img_t)
-
         v_median = np.median(v)
         if factor > 0:
             mask = v > v_median
