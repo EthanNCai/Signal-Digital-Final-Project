@@ -8,10 +8,20 @@ const { Title, Paragraph } = Typography;
 
 const ProcessPage: React.FC = () => {
   var parameter: Parameter_Dict = {
+    hue: 0,
+    smooth: 0,
+    temperature: 0,
+    sharp: 0,
+    saturation: 0,
     brightness: 0,
     contrast: 0,
     crop_arg: [0, 0, 100, 100],
   };
+  const [hue, setHue] = useState(0);
+  const [smooth, setSmooth] = useState(0);
+  const [temperature, setTemperature] = useState(0);
+  const [sharp, setSharp] = useState(0);
+  const [saturation, setSaturation] = useState(0);
   const [brightness, setExposure] = useState(0);
   const [contrast, setContrast] = useState(0);
   const [crop_arg, serCrop_arg] = useState([0, 0, 100, 100]);
@@ -27,6 +37,11 @@ const ProcessPage: React.FC = () => {
   const sendRequest = () => {
     parameter.brightness = brightness;
     parameter.contrast = contrast;
+    parameter.hue = hue;
+    parameter.saturation = saturation;
+    parameter.sharp = sharp;
+    parameter.smooth = smooth;
+    parameter.temperature = temperature;
     fetch(`http://127.0.0.1:8000/api/image_operation/${md5}`, {
       method: "POST",
       headers: {
@@ -47,6 +62,11 @@ const ProcessPage: React.FC = () => {
       {" "}
       <ParameterContext.Provider
         value={{
+          hue,
+          smooth,
+          temperature,
+          sharp,
+          saturation,
           brightness,
           contrast,
           crop_arg,
@@ -54,6 +74,11 @@ const ProcessPage: React.FC = () => {
           setContrast,
           sendRequest,
           serCrop_arg,
+          setHue,
+          setSmooth,
+          setTemperature,
+          setSharp,
+          setSaturation,
         }}>
         <Box
           sx={{

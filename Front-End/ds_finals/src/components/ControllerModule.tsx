@@ -22,8 +22,23 @@ const ControllerModule: React.FC = () => {
   const [points2, setPoints2] = useState<Point[]>(initial_points);
   const [points3, setPoints3] = useState<Point[]>(initial_points);
   const [hsl, setHsl] = React.useState("female");
-  const { brightness, contrast, setExposure, setContrast, sendRequest } =
-    useContext(ParameterContext);
+  const {
+    hue,
+    smooth,
+    temperature,
+    sharp,
+    saturation,
+    brightness,
+    contrast,
+    setExposure,
+    setContrast,
+    sendRequest,
+    setHue,
+    setSmooth,
+    setTemperature,
+    setSharp,
+    setSaturation,
+  } = useContext(ParameterContext);
   const handleExposureChange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
       setExposure(newValue);
@@ -40,6 +55,53 @@ const ControllerModule: React.FC = () => {
   const handleExposureChangeCommitted = () => {
     sendRequest();
   };
+  const handleHueChangeCommitted = () => {
+    sendRequest();
+  };
+  const handleHueChange = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === "number") {
+      setHue(newValue);
+    }
+  };
+  const handleSmoothChangeCommitted = () => {
+    sendRequest();
+  };
+  const handleSmoothChange = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === "number") {
+      setSmooth(newValue);
+    }
+  };
+  const handleTemperatureChangeCommitted = () => {
+    sendRequest();
+  };
+  const handleTemperatureChange = (
+    event: Event,
+    newValue: number | number[]
+  ) => {
+    if (typeof newValue === "number") {
+      setTemperature(newValue);
+    }
+  };
+  const handleSharpChangeCommitted = () => {
+    sendRequest();
+  };
+  const handleSharpChange = (event: Event, newValue: number | number[]) => {
+    if (typeof newValue === "number") {
+      setSharp(newValue);
+    }
+  };
+  const handleSaturationChangeCommitted = () => {
+    sendRequest();
+  };
+  const handleSaturationChange = (
+    event: Event,
+    newValue: number | number[]
+  ) => {
+    if (typeof newValue === "number") {
+      setSaturation(newValue);
+    }
+  };
+
   const handleHslChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setHsl((event.target as HTMLInputElement).value);
   };
@@ -99,40 +161,55 @@ const ControllerModule: React.FC = () => {
           </Stack>
 
           <Chip label="锐化" />
-          <Stack direction={"row"}>
-            <Typography
-              sx={{
-                display: "inline-block",
-                marginRight: "10px",
-                marginTop: "5px",
-                whiteSpace: "nowrap",
-              }}
-              fontSize="small">
-              属性A
-            </Typography>
-            <Slider defaultValue={50} valueLabelDisplay="auto" />
-          </Stack>
-          <Stack direction={"row"}>
-            <Typography
-              sx={{
-                display: "inline-block",
-                marginRight: "10px",
-                marginTop: "5px",
-                whiteSpace: "nowrap",
-              }}
-              fontSize="small">
-              属性B
-            </Typography>
-            <Slider defaultValue={50} valueLabelDisplay="auto" />
-          </Stack>
+          <Slider
+            min={0}
+            max={10}
+            step={1}
+            defaultValue={0}
+            valueLabelDisplay="auto"
+            onChange={handleSharpChange}
+            onChangeCommitted={handleSharpChangeCommitted}
+          />
           <Chip label="平滑" />
-          <Slider defaultValue={50} valueLabelDisplay="auto" />
+          <Slider
+            min={0}
+            max={10}
+            step={1}
+            defaultValue={0}
+            valueLabelDisplay="auto"
+            onChange={handleSmoothChange}
+            onChangeCommitted={handleSmoothChangeCommitted}
+          />
           <Chip label="色温" />
-          <Slider defaultValue={50} valueLabelDisplay="auto" />
+          <Slider
+            min={-10}
+            max={10}
+            step={1}
+            defaultValue={0}
+            valueLabelDisplay="auto"
+            onChange={handleTemperatureChange}
+            onChangeCommitted={handleTemperatureChangeCommitted}
+          />
           <Chip label="色调" />
-          <Slider defaultValue={50} valueLabelDisplay="auto" />
+          <Slider
+            min={-10}
+            max={10}
+            step={1}
+            defaultValue={0}
+            valueLabelDisplay="auto"
+            onChange={handleHueChange}
+            onChangeCommitted={handleHueChangeCommitted}
+          />
           <Chip label="饱和度" />
-          <Slider defaultValue={50} valueLabelDisplay="auto" />
+          <Slider
+            min={-10}
+            max={10}
+            step={1}
+            defaultValue={0}
+            valueLabelDisplay="auto"
+            onChange={handleSaturationChange}
+            onChangeCommitted={handleSaturationChangeCommitted}
+          />
         </Box>
         <Box sx={{ margin: "15px" }}>
           <FormControl>

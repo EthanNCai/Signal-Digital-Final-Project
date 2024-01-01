@@ -2,11 +2,13 @@ import os
 import cv2
 import numpy as np
 from pathlib import Path
+
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[2]  # root directory
 FONT = ROOT / 'font'
 
 image_extensions = ['.png', '.jpeg', '.jpg']
+
 
 class TargetImage:
 
@@ -67,27 +69,36 @@ class ImageFactory:
             image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:
             image = self.contrast(self.parameter_dict['contrast'], image)
-        if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
-            image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
-        if self.parameter_dict['crop'] != False:
-            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
-        if self.parameter_dict['hue'] != 0:
-            image = self.hue(self.parameter_dict['hue'], image)
-        if self.parameter_dict['temperature'] != 0:
-            image = self.temperature(self.parameter_dict['temperature'], image)
-        if self.parameter_dict['saturation'] != 0:
-            image = self.saturation(self.parameter_dict['saturation'], image)
-        if self.parameter_dict['sharp'] != 0:
-            image = self.sharp(self.parameter_dict['sharp'], image)
-        if self.parameter_dict['smooth'] != 0:
-            image = self.smooth(self.parameter_dict['smooth'], image)
+        #if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
+        #    image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
+        #if self.parameter_dict['crop'] != False:
+        #    image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+        #if self.parameter_dict['hue'] != 0:
+        #    image = self.hue(self.parameter_dict['hue'], image)
+        #if self.parameter_dict['temperature'] != 0:
+        #    image = self.temperature(self.parameter_dict['temperature'], image)
+        #if self.parameter_dict['saturation'] != 0:
+        #    image = self.saturation(self.parameter_dict['saturation'], image)
+        #if self.parameter_dict['sharp'] != 0:
+        #    image = self.sharp(self.parameter_dict['sharp'], image)
+        #if self.parameter_dict['smooth'] != 0:
+        #    image = self.smooth(self.parameter_dict['smooth'], image)
         return image
-
+        
     @staticmethod
-    def brightness(light, image):
+    def exposure(contrast, light, image):
+
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
 
-        image_hls = cv2.convertScaleAbs(image_hls, beta= light * 10)
+        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast+10)/20 * 2, beta= light * 10)
+
+        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
+
+    @staticmethod
+    def brightness(brightness, image):
+        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+
+        image_hls = cv2.convertScaleAbs(image_hls, beta= brightness * 10)
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
 
@@ -97,15 +108,6 @@ class ImageFactory:
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
         
         image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10 ) / 20 * 2)
-
-        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
-
-    @staticmethod
-    def exposure(contrast, light, image):
-
-        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
-
-        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast+10)/20 * 2, beta= light * 10)
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
     
@@ -132,7 +134,7 @@ class ImageFactory:
             bottom = int(crop_arg[1] * height / 100)
             right = int(crop_arg[2] * width / 100)
             top = int(crop_arg[3] * height / 100)
-            
+
             image = image[bottom:top, left:right]
 
         return image
@@ -141,20 +143,20 @@ class ImageFactory:
     def saturation(saturation, image):
         # TODO: Image Saturation
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
-        
+
         saturation = (saturation + 10) / 20 * 2
 
         image_hls[:, :, 2] = np.clip(image_hls[:, :, 2] * saturation, 0, 255)
-        
+
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
-    
+
     @staticmethod
     def hue(hue, image):
 
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         # Adjust hue
-        image_hsv[:, :, 0] = (image_hsv[:, :, 0] + hue*10) % 180
+        image_hsv[:, :, 0] = (image_hsv[:, :, 0] + hue * 10) % 180
 
         # Convert back to BGR
         return np.clip(cv2.cvtColor(image_hsv, cv2.COLOR_HSV2BGR), 0, 255)
@@ -172,11 +174,11 @@ class ImageFactory:
 
         if sharp > 0:
             kernel = np.array([[0, -sharp, 0],
-                            [-sharp, 1 + 4*sharp, -sharp],
-                            [0, -sharp, 0]])
+                               [-sharp, 1 + 4 * sharp, -sharp],
+                               [0, -sharp, 0]])
             sharpened_image = cv2.filter2D(image, -1, kernel)
         else:
-            sharpened_image = image  
+            sharpened_image = image
 
         return sharpened_image
 
@@ -187,6 +189,6 @@ class ImageFactory:
             blurred_image = cv2.GaussianBlur(image, (0, 0), smooth)
             smoothed_image = cv2.addWeighted(image, -0.5, blurred_image, 1.5, 0)
         else:
-            smoothed_image = image  
+            smoothed_image = image
 
         return smoothed_image

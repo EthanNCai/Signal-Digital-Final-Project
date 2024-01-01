@@ -6,6 +6,11 @@ export type Md5 = {
 };
 
 export interface Parameter_Dict {
+  hue: number;
+  smooth: number;
+  temperature: number;
+  sharp: number;
+  saturation: number;
   brightness: number;
   contrast: number;
   crop_arg: number[];
@@ -14,6 +19,11 @@ export interface Parameter_Dict {
 export {};
 
 type ParameterContextType = {
+  hue: number;
+  smooth: number;
+  temperature: number;
+  sharp: number;
+  saturation: number;
   brightness: number;
   contrast: number;
   crop_arg: number[];
@@ -21,8 +31,18 @@ type ParameterContextType = {
   setContrast: React.Dispatch<React.SetStateAction<number>>;
   sendRequest: (params?: any) => void;
   serCrop_arg: (params?: any) => void;
+  setHue: (params?: any) => void;
+  setSmooth: (params?: any) => void;
+  setTemperature: (params?: any) => void;
+  setSharp: (params?: any) => void;
+  setSaturation: (params?: any) => void;
 };
 export const ParameterContext = createContext<ParameterContextType>({
+  hue: 0,
+  smooth: 0,
+  temperature: 0,
+  sharp: 0,
+  saturation: 0,
   brightness: 0,
   contrast: 0,
   crop_arg: [0, 0, 0, 0],
@@ -30,4 +50,9 @@ export const ParameterContext = createContext<ParameterContextType>({
   setContrast: () => {},
   sendRequest: () => {},
   serCrop_arg: () => {},
+  setHue: () => {},
+  setSmooth: () => {},
+  setTemperature: () => {},
+  setSharp: () => {},
+  setSaturation: () => {},
 });
