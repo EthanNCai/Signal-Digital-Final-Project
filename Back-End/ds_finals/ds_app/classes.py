@@ -63,8 +63,8 @@ class ImageFactory:
              means user did not touch this operation, so we just skip it
         """
 
-        if self.parameter_dict['exposure_contrast'] != 0 and self.parameter_dict['exposure_brightness'] != 0:
-            image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['brightness'], image)
+        #if self.parameter_dict['exposure_contrast'] != 0 and self.parameter_dict['exposure_brightness'] != 0:
+        #    image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['brightness'], image)
         if self.parameter_dict['brightness'] != 0:
             image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:
