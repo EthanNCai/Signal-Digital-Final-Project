@@ -83,6 +83,8 @@ class ImageFactory:
             image = self.sharp(self.parameter_dict['sharp'], image)
         if self.parameter_dict['smooth'] != 0:
             image = self.smooth(self.parameter_dict['smooth'], image)
+        if self.parameter_dict['dotext'] != False:
+            image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
         return image
         
     @staticmethod
@@ -192,3 +194,31 @@ class ImageFactory:
             smoothed_image = image
 
         return smoothed_image
+
+    @staticmethod
+    def text(dotext, text, position, image):
+        """
+        在图像上添加文字
+
+        参数：
+        - text: 要添加的文字
+        - position: 文字的起始位置 (x, y)
+        - font: 字体类型 Default = 0
+        - font_path: 字体类型 Default = 0
+        - font_scale: 字体缩放因子 Default = 1
+        - color: 文字颜色 (B, G, R) Default = (75, 25, 230)
+        - thickness: 文字的粗细 Default = 2
+        """
+        if dotext:
+            height, width, _ = image.shape
+
+            x, y = int(position[0] * width / 100), int(position[1] * height / 100)
+
+            (text_width, text_height), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+
+            x -= text_width // 2
+            y -= text_height // 2
+
+            cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (75, 25, 230), 2)
+
+        return image

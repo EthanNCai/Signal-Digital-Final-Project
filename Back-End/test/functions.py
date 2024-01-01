@@ -150,8 +150,7 @@ def smooth(smooth, image):
     return smoothed_image
 
 
-# 添加文字
-def add_text(freetype, text, position, font, font_scale, color, thickness, image):
+def text(dotext, text, position, image):
     """
     在图像上添加文字
 
@@ -164,9 +163,16 @@ def add_text(freetype, text, position, font, font_scale, color, thickness, image
     - color: 文字颜色 (B, G, R) Default = (75, 25, 230)
     - thickness: 文字的粗细 Default = 2
     """
+    if dotext:
+        height, width, _ = image.shape
 
-    # 在图像上添加文字
-    cv2.putText(image, text, position, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness)
+        x, y = int(position[0] * width / 100), int(position[1] * height / 100)
 
-    # 保存输出图像
+        (text_width, text_height), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+
+        x -= text_width // 2
+        y -= text_height // 2
+
+        cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (75, 25, 230), 2)
+
     return image
