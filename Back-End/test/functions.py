@@ -120,14 +120,10 @@ def hue(hue, image):
 
 def temperature(temperature, image):
 
-    image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    temperature = (temperature + 10) / 20 * 2
-
-    image_hsv[:, :, 1] = np.clip(image_hsv[:, :, 1] * temperature, 0, 255)
-    image_hsv[:, :, 2] = np.clip(image_hsv[:, :, 2] * temperature, 0, 255)
-
-    return np.clip(cv2.cvtColor(image_hsv, cv2.COLOR_HSV2BGR), 0, 255)
+    temperature = temperature*10
+    result = np.clip(image + [-temperature // 2, 0, temperature // 2], 0, 255).astype(np.uint8)
+    
+    return result
 
 
 def sharp(sharp, image):

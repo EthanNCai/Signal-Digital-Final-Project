@@ -61,61 +61,53 @@ class ImageFactory:
              means user did not touch this operation, so we just skip it
         """
 
+        if self.parameter_dict['exposure_contrast'] != 0 and self.parameter_dict['exposure_brightness'] != 0:
+            image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['brightness'], image)
         if self.parameter_dict['brightness'] != 0:
             image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:
             image = self.contrast(self.parameter_dict['contrast'], image)
-        #if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
-        #    image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
-        #if self.parameter_dict['crop'] != False:
-        #    image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
-        #if self.parameter_dict['hue'] != 0:
-        #    image = self.hue(self.parameter_dict['hue'], image)
-        #if self.parameter_dict['temperature'] != 0:
-        #    image = self.temperature(self.parameter_dict['temperature'], image)
-        #if self.parameter_dict['saturation'] != 0:
-        #    image = self.saturation(self.parameter_dict['saturation'], image)
-        #if self.parameter_dict['sharp'] != 0:
-        #    image = self.sharp(self.parameter_dict['sharp'], image)
-        #if self.parameter_dict['smooth'] != 0:
-        #    image = self.smooth(self.parameter_dict['smooth'], image)
+        if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
+            image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
+        if self.parameter_dict['crop'] != False:
+            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+        if self.parameter_dict['hue'] != 0:
+            image = self.hue(self.parameter_dict['hue'], image)
+        if self.parameter_dict['temperature'] != 0:
+            image = self.temperature(self.parameter_dict['temperature'], image)
+        if self.parameter_dict['saturation'] != 0:
+            image = self.saturation(self.parameter_dict['saturation'], image)
+        if self.parameter_dict['sharp'] != 0:
+            image = self.sharp(self.parameter_dict['sharp'], image)
+        if self.parameter_dict['smooth'] != 0:
+            image = self.smooth(self.parameter_dict['smooth'], image)
         return image
 
     @staticmethod
-    def brightness(factor, image):
-        img = image
-        img_t = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
-        h, l, s = cv2.split(img_t)
-        if factor > 0:
-            factor += 40
-        elif factor < 0:
-            factor -= 40
+    def brightness(light, image):
+        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
 
-        l_t = np.clip(cv2.add(l, factor), 0, 255)
-        img_hls = cv2.merge((h, l_t, s))
-        adjusted_img = np.clip(cv2.cvtColor(img_hls, cv2.COLOR_HLS2BGR), 0, 255)
-        return adjusted_img
+        image_hls = cv2.convertScaleAbs(image_hls, beta= light * 10)
+
+        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
 
     @staticmethod
-    def contrast(factor, image):
-        # TODO: Add contrast logic here using the 'factor' parameter
-        img_t = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    def contrast(contrast, image):
+        
+        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+        
+        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10 ) / 20 * 2)
 
-        h, s, v = cv2.split(img_t)
-        v_median = np.median(v)
-        if factor > 0:
-            mask = v > v_median
-            contrast = factor + 40
-            v[mask] = np.clip(v[mask] + contrast, 0, 255).reshape(-1)
-        elif factor < 0:
-            mask = v < v_median
-            contrast = factor + 40
-            v[mask] = np.clip(v[mask] + contrast, 0, 255).reshape(-1)
-        else:
-            return image
-        img_hsv = cv2.merge((h, s, v))
-        adjusted_img = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2BGR)
-        return adjusted_img
+        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
+
+    @staticmethod
+    def exposure(contrast, light, image):
+
+        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+
+        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast+10)/20 * 2, beta= light * 10)
+
+        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
     
     @staticmethod
     def turn(right_turn, left_turn, image):
@@ -169,15 +161,11 @@ class ImageFactory:
 
     @staticmethod
     def temperature(temperature, image):
+
+        temperature = temperature*10
+        result = np.clip(image + [-temperature // 2, 0, temperature // 2], 0, 255).astype(np.uint8)
     
-        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-        temperature = (temperature + 10) / 20 * 2
-
-        image_hsv[:, :, 1] = np.clip(image_hsv[:, :, 1] * temperature, 0, 255)
-        image_hsv[:, :, 2] = np.clip(image_hsv[:, :, 2] * temperature, 0, 255)
-
-        return np.clip(cv2.cvtColor(image_hsv, cv2.COLOR_HSV2BGR), 0, 255)
+        return result
     
     @staticmethod
     def sharp(sharp, image):
