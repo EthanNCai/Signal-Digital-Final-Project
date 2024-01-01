@@ -14,11 +14,16 @@ export interface Parameter_Dict {
   brightness: number;
   contrast: number;
   crop_arg: number[];
+  crop: boolean;
 }
 
 export {};
 
 type ParameterContextType = {
+  dotext: boolean;
+  crop: boolean;
+  isPreviewText: boolean;
+  isPreviewCrop: boolean;
   hue: number;
   smooth: number;
   temperature: number;
@@ -36,8 +41,16 @@ type ParameterContextType = {
   setTemperature: (params?: any) => void;
   setSharp: (params?: any) => void;
   setSaturation: (params?: any) => void;
+  setIsPreviewText: (params?: any) => void;
+  setIsPreviewCrop: (params?: any) => void;
+  setCrop: (params?: any) => void;
+  setDotext: (params?: any) => void;
 };
 export const ParameterContext = createContext<ParameterContextType>({
+  dotext: false,
+  crop: false,
+  isPreviewText: false,
+  isPreviewCrop: false,
   hue: 0,
   smooth: 0,
   temperature: 0,
@@ -55,4 +68,8 @@ export const ParameterContext = createContext<ParameterContextType>({
   setTemperature: () => {},
   setSharp: () => {},
   setSaturation: () => {},
+  setIsPreviewText: () => {},
+  setIsPreviewCrop: () => {},
+  setCrop: () => {},
+  setDotext: () => {},
 });

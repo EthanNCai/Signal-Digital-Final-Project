@@ -69,8 +69,8 @@ class ImageFactory:
             image = self.contrast(self.parameter_dict['contrast'], image)
         # if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
         #    image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
-        # if self.parameter_dict['crop'] != False:
-        #    image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+        if self.parameter_dict['crop']:
+            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         if self.parameter_dict['hue'] != 0:
             image = self.hue(self.parameter_dict['hue'], image)
         if self.parameter_dict['temperature'] != 0:

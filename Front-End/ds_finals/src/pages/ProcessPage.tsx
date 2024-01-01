@@ -1,6 +1,6 @@
 import { Box, Container, Stack, Paper } from "@mui/material";
 import ControllerModule from "../components/ControllerModule";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SPControllerModule from "../components/SPControllerModule";
 import { Typography } from "antd";
 import { ParameterContext, Parameter_Dict } from "../types/interfaces";
@@ -8,6 +8,7 @@ const { Title, Paragraph } = Typography;
 
 const ProcessPage: React.FC = () => {
   var parameter: Parameter_Dict = {
+    crop: false,
     hue: 0,
     smooth: 0,
     temperature: 0,
@@ -17,6 +18,11 @@ const ProcessPage: React.FC = () => {
     contrast: 0,
     crop_arg: [0, 0, 100, 100],
   };
+  const [isPreviewText, setIsPreviewText] = useState(false);
+  const [isPreviewCrop, setIsPreviewCrop] = useState(false);
+  const [crop, setCrop] = useState(false);
+  const [dotext, setDotext] = useState(false);
+  const [text, setText] = useState("");
   const [hue, setHue] = useState(0);
   const [smooth, setSmooth] = useState(0);
   const [temperature, setTemperature] = useState(0);
@@ -26,6 +32,7 @@ const ProcessPage: React.FC = () => {
   const [contrast, setContrast] = useState(0);
   const [crop_arg, serCrop_arg] = useState([0, 0, 100, 100]);
   const [md5, setMd5] = useState<string>("");
+  const [initialRender, setInitialRender] = useState(true);
   const [imageurl, setImageurl] = useState<string>(
     "https://s1.hdslb.com/bfs/static/laputa-search/client/assets/nodata.67f7a1c9.png"
   );
@@ -33,7 +40,13 @@ const ProcessPage: React.FC = () => {
     setMd5(md5);
     setImageurl(`http://127.0.0.1:8000/api/load_image/${md5}`);
   };
-
+  useEffect(() => {
+    if (initialRender) {
+      setInitialRender(false);
+    } else {
+      sendRequest();
+    }
+  }, [crop]);
   const sendRequest = () => {
     parameter.brightness = brightness;
     parameter.contrast = contrast;
@@ -42,6 +55,9 @@ const ProcessPage: React.FC = () => {
     parameter.sharp = sharp;
     parameter.smooth = smooth;
     parameter.temperature = temperature;
+    parameter.crop_arg = crop_arg;
+    parameter.crop = crop;
+    console.log(crop);
     fetch(`http://127.0.0.1:8000/api/image_operation/${md5}`, {
       method: "POST",
       headers: {
@@ -62,6 +78,10 @@ const ProcessPage: React.FC = () => {
       {" "}
       <ParameterContext.Provider
         value={{
+          crop,
+          dotext,
+          isPreviewText,
+          isPreviewCrop,
           hue,
           smooth,
           temperature,
@@ -79,6 +99,10 @@ const ProcessPage: React.FC = () => {
           setTemperature,
           setSharp,
           setSaturation,
+          setIsPreviewText,
+          setIsPreviewCrop,
+          setCrop,
+          setDotext,
         }}>
         <Box
           sx={{
@@ -146,17 +170,19 @@ const ProcessPage: React.FC = () => {
                         borderRadius: "10px",
                       }}
                     />
-                    <div
-                      style={{
-                        content: '""',
-                        position: "absolute",
-                        top: `${100 - crop_arg[3]}%`,
-                        left: `${crop_arg[0]}%`,
-                        right: `${100 - crop_arg[2]}%`,
-                        bottom: `${crop_arg[1]}%`,
-                        backgroundColor: "rgba(188, 255, 255, 0.5)", // 设置半透明的背景颜色
-                        borderRadius: "10px",
-                      }}></div>
+                    {isPreviewCrop && (
+                      <div
+                        style={{
+                          content: '""',
+                          position: "absolute",
+                          top: `${100 - crop_arg[3]}%`,
+                          left: `${crop_arg[0]}%`,
+                          right: `${100 - crop_arg[2]}%`,
+                          bottom: `${crop_arg[1]}%`,
+                          backgroundColor: "rgba(188, 255, 255, 0.5)",
+                          borderRadius: "10px",
+                        }}></div>
+                    )}
                   </Box>
                 </Box>
                 <Paper
