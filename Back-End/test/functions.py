@@ -45,28 +45,28 @@ def brightness(factor, image):
 
 def exposure_api(contrast, light, image):
 
-    image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+    image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast+10)/20 * 2, beta= light * 10)
 
-    return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
+    return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
 
 def light_api(light, image):
-    image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+    image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     image_hls = cv2.convertScaleAbs(image_hls, beta= light * 10)
 
-    return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
+    return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
 
 def contrast_api(contrast, image):
     
-    image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
+    image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     
     image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10 ) / 20 * 2)
 
-    return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
+    return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
 
 def turn(right_turn, left_turn, image):
