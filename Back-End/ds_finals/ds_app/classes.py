@@ -83,8 +83,8 @@ class ImageFactory:
             image = self.sharp(self.parameter_dict['sharp'], image)
         if self.parameter_dict['smooth'] != 0:
             image = self.smooth(self.parameter_dict['smooth'], image)
-        if self.parameter_dict['dotext'] != False:
-            image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
+        #if self.parameter_dict['dotext'] != False:
+        #    image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
         return image
         
     @staticmethod
