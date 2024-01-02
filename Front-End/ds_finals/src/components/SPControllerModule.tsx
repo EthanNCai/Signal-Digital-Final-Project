@@ -38,6 +38,7 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     setRight_turn,
     sendRequest,
     setHisteq,
+    setBeauty,
     beauty,
     position,
     setPosition,
@@ -85,7 +86,7 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     setRight_turn(!right_turn);
   };
   const handleBeautyToggle = () => {
-    setHisteq(!beauty);
+    setBeauty(!beauty);
   };
   const handelDownload = () => {
     fetch(imageurl)
