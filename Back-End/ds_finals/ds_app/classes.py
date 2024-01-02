@@ -144,29 +144,44 @@ class ImageFactory:
         return image
 
     @staticmethod
-    def exposure(contrast, light, image):
-        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    def exposure(contrast, brightness, image):
 
-        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10) / 20 * 2, beta=light * 10)
+        img_float = image.astype(float)
 
-        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
+        adjusted_image = np.clip((img_float - 128) * (contrast+10)/20 * 2 + 128, 0, 255).astype(np.uint8)
+
+        adjusted_image = np.clip(adjusted_image + brightness*10, 0, 255).astype(np.uint8)
+
+        return adjusted_image
 
     @staticmethod
     def brightness(brightness, image):
-        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # 将图像转换为浮点数格式
+        img_float = image.astype(float)
 
-        image_hls = cv2.convertScaleAbs(image_hls, beta=brightness * 10)
+        # 亮度调整公式：new_pixel = pixel + brightness_factor
+        adjusted_image = np.clip(img_float + brightness*10, 0, 255).astype(np.uint8)
 
-        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
+        return adjusted_image
 
     @staticmethod
     def contrast(contrast, image):
+
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10) / 20 * 2)
+        
+        img_float = image.astype(float)
 
-        return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
+        contrast = (contrast+10)/20 * 2
 
+
+        if contrast == 0:
+            contrast = 0.1
+        
+        adjusted_image = np.clip((img_float - 128) * contrast + 128, 0, 255).astype(np.uint8)
+
+        return adjusted_image
+    
     @staticmethod
     def turn(right_turn, left_turn, image):
         # TODO: Control the rotation of the image by right_turn, left_turn
