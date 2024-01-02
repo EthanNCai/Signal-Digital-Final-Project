@@ -82,8 +82,10 @@ class ImageFactory:
              means user did not touch this operation, so we just skip it
         """
 
-        if self.parameter_dict['exposure_contrast'] != 0 or self.parameter_dict['exposure_brightness'] != 0:
-            image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['exposure_brightness'], image)
+        if self.parameter_dict['exposure_contrast'] != 0:
+            image = self.contrast(self.parameter_dict['exposure_contrast'], image)
+        if self.parameter_dict['exposure_brightness'] != 0:
+            image = self.brightness(self.parameter_dict['exposure_brightness'], image)
         if self.parameter_dict['brightness'] != 0:
             image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:
@@ -124,10 +126,9 @@ class ImageFactory:
 
     @staticmethod
     def brightness(brightness, image):
-        # 将图像转换为浮点数格式
+
         img_float = image.astype(float)
 
-        # 亮度调整公式：new_pixel = pixel + brightness_factor
         adjusted_image = np.clip(img_float + brightness*10, 0, 255).astype(np.uint8)
 
         return adjusted_image
