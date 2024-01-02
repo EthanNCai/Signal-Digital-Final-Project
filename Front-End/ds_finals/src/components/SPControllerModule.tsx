@@ -18,19 +18,28 @@ import { text } from "stream/consumers";
 import { useState, ChangeEvent } from "react";
 const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
   const {
+    imageurl,
     crop,
     dotext,
     isPreviewText,
     isPreviewCrop,
     crop_arg,
     text,
+    histeq,
     serCrop_arg,
     setIsPreviewText,
     setIsPreviewCrop,
     setCrop,
     setDotext,
+    left_turn,
+    right_turn,
     setText,
+    setLeft_turn,
+    setRight_turn,
     sendRequest,
+    setHisteq,
+    setBeauty,
+    beauty,
     position,
     setPosition,
   } = useContext(ParameterContext);
@@ -65,6 +74,34 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     outputnumber[1] = modifiesNumber;
     outputnumber[0] = position[0];
     setPosition(outputnumber);
+  };
+
+  const handleHiseqToggle = () => {
+    setHisteq(!histeq);
+  };
+  const handleLeftTurnToggle = () => {
+    setLeft_turn(!left_turn);
+  };
+  const handleRightTurnToggle = () => {
+    setRight_turn(!right_turn);
+  };
+  const handleBeautyToggle = () => {
+    setBeauty(!beauty);
+  };
+  const handelDownload = () => {
+    fetch(imageurl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "file";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Download error:", error);
+      });
   };
 
   const handleText = (event: ChangeEvent<HTMLInputElement>) => {
@@ -167,15 +204,25 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
           </Button>
         </Box>
         <Box sx={{ marginTop: "20px" }}>
-          <Button sx={{ margin: "5px" }} variant="contained">
-            直方图均衡化
+          <Button
+            sx={{ margin: "5px" }}
+            variant="contained"
+            onClick={handleHiseqToggle}>
+            {histeq ? "取消" : "直方图均衡化"}
           </Button>
-          <Button sx={{ margin: "5px" }} variant="contained">
-            自动美颜
+          <Button
+            sx={{ margin: "5px" }}
+            variant="contained"
+            onClick={handleBeautyToggle}>
+            {beauty ? "取消" : "自动美颜"}
           </Button>
           <ButtonGroup>
-            <Button variant="outlined">左转</Button>
-            <Button variant="outlined">右转</Button>
+            <Button variant="outlined" onClick={handleRightTurnToggle}>
+              {right_turn ? "取消左转" : "左转"}
+            </Button>
+            <Button variant="outlined" onClick={handleLeftTurnToggle}>
+              {left_turn ? "取消右转" : "右转"}{" "}
+            </Button>
           </ButtonGroup>
         </Box>
         <Box sx={{ marginTop: "10px" }}>
@@ -186,7 +233,7 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
           <IconButton>
             <Home />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handelDownload}>
             <Download />
           </IconButton>
           <IconButton>

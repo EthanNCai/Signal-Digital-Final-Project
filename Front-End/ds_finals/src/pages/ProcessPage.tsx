@@ -90,7 +90,17 @@ const ProcessPage: React.FC = () => {
     } else {
       sendRequest();
     }
-  }, [crop, r_curve, g_curve, b_curve, dotext]);
+  }, [
+    crop,
+    r_curve,
+    g_curve,
+    b_curve,
+    dotext,
+    histeq,
+    left_turn,
+    right_turn,
+    beauty,
+  ]);
   const sendRequest = () => {
     parameter.brightness = brightness;
     parameter.contrast = contrast;
@@ -107,6 +117,10 @@ const ProcessPage: React.FC = () => {
     parameter.position = position;
     parameter.dotext = dotext;
     parameter.text = text;
+    parameter.histeq = histeq;
+    parameter.beauty = beauty;
+    parameter.left_turn = left_turn;
+    parameter.right_turn = right_turn;
     for (let i = 0; i < 4; i++) {
       parameter.r_curve[2 * i] = r_curve[i].x;
       parameter.r_curve[2 * i + 1] = 1 - r_curve[i].y;
@@ -136,6 +150,7 @@ const ProcessPage: React.FC = () => {
       {" "}
       <ParameterContext.Provider
         value={{
+          imageurl,
           beauty,
           hsl,
           text,

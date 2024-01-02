@@ -14,6 +14,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 image_extensions = ['.png', '.jpeg', '.jpg']
 
+
 def calculate_bezier_point(P0, P1, P2, P3, t):
     u = 1 - t
     tt = t * t
@@ -139,6 +140,11 @@ class ImageFactory:
              means user did not touch this operation, so we just skip it
         """
 
+        if self.parameter_dict['histeq'] != 0:
+            image = self.histeq(self.parameter_dict['histeq'], image)
+        if self.parameter_dict['exposure_contrast'] != 0 or self.parameter_dict['exposure_brightness'] != 0:
+            image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['exposure_brightness'],
+                                  image)
         if self.parameter_dict['exposure_contrast'] != 0:
             image = self.contrast(self.parameter_dict['exposure_contrast'], image)
         if self.parameter_dict['exposure_brightness'] != 0:
@@ -147,8 +153,10 @@ class ImageFactory:
             image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:
             image = self.contrast(self.parameter_dict['contrast'], image)
-        # if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
-        #    image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
+        if self.parameter_dict['hsl'] != 0:
+            image = self.hsl(self.parameter_dict['hsl'], image)
+        if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
+            image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
         if self.parameter_dict['hue'] != 0:
             image = self.hue(self.parameter_dict['hue'], image)
         if self.parameter_dict['temperature'] != 0:
@@ -165,11 +173,10 @@ class ImageFactory:
             image = self.curve(self.parameter_dict['r_curve'], self.parameter_dict['g_curve'],
                                self.parameter_dict['b_curve'], image)
         if self.parameter_dict['dotext']:
-            image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
+            image = self.text(self.parameter_dict['dotext'], self.parameter_dict['text'],
+                              self.parameter_dict['position'], image)
         if self.parameter_dict['crop']:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
-        if self.parameter_dict['beauty']:
-            image = self.apply_beauty_filter(self.parameter_dict['beauty'], image)
         return image
 
     @staticmethod
@@ -194,10 +201,14 @@ class ImageFactory:
 
     @staticmethod
     def contrast(contrast, image):
+
+        image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
         
         img_float = image.astype(float)
 
         contrast = (contrast+10)/20 * 2
+
 
         if contrast == 0:
             contrast = 0.1
@@ -224,13 +235,19 @@ class ImageFactory:
         # TODO: Crop the image by crop and crop_arg, which is a bool and [left, bottom, right, top]
         if crop:
             height, width, _ = image.shape
+            print(crop_arg)
+            x1 = crop_arg[0]
+            y1 = crop_arg[1]
+            x2 = crop_arg[2]
+            y2 = crop_arg[3]
+            # x1 < x2
+            # y1 < y2
+            left = int(x1 * width / 100)
+            right = int(x2 * width / 100)
+            bottom = int((100-y1) * height / 100)
+            top = int((100-y2) * height / 100)
 
-            left = int(crop_arg[0] * width / 100)
-            bottom = int(crop_arg[1] * height / 100)
-            right = int(crop_arg[2] * width / 100)
-            top = int(crop_arg[3] * height / 100)
-
-            image = image[bottom:top, left:right].copy()
+            image = image[top:bottom, left:right]
 
         return image
 
@@ -247,7 +264,6 @@ class ImageFactory:
 
     @staticmethod
     def hue(hue, image):
-
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         # Adjust hue
@@ -258,7 +274,6 @@ class ImageFactory:
 
     @staticmethod
     def temperature(temperature, image):
-
         temperature = temperature * 10
         result = np.clip(image + [-temperature // 2, 0, temperature // 2], 0, 255).astype(np.uint8)
 
@@ -266,7 +281,6 @@ class ImageFactory:
 
     @staticmethod
     def sharp(sharp, image):
-
         if sharp > 0:
             kernel = np.array([[0, -sharp, 0],
                                [-sharp, 1 + 4 * sharp, -sharp],
@@ -278,8 +292,70 @@ class ImageFactory:
         return sharpened_image
 
     @staticmethod
-    def smooth(smooth, image):
+    def histeq(his_sw, image):
+        img = image
 
+        if his_sw == True:
+            b, g, r = cv2.split(img)
+            b_t = cv2.equalizeHist(b)
+            g_t = cv2.equalizeHist(g)
+            r_t = cv2.equalizeHist(r)
+            adjusted_img = cv2.merge((b_t, g_t, r_t))
+        elif his_sw == False:
+            adjusted_img = img
+
+        return adjusted_img
+
+    @staticmethod
+    def hsl(param_list, image):
+        img = image
+        img_back = img
+        group_size = 3
+        param_list_2d = [param_list[i:i + group_size] for i in
+                         range(0, len(param_list), group_size)]
+        color_list = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
+        color_dict = dict(zip(color_list, param_list_2d))
+        adjust_color_dicts = {key: value for key, value in color_dict.items() if value != [0, 0, 0]}
+        for color, adjust_value in adjust_color_dicts.items():
+            if color == 'red':
+                lower_red = np.array([0, 50, 50], dtype=np.uint8)
+                upper_red = np.array([10, 255, 255], dtype=np.uint8)
+                adjust_img = _adjust_and_replace_color(lower=lower_red, upper=upper_red, img=img,
+                                                       adjust_list=adjust_value)
+            elif color == 'orange':
+                lower_orange = np.array([11, 43, 46], dtype=np.uint8)
+                upper_orange = np.array([25, 255, 255], dtype=np.uint8)
+                adjust_img = _adjust_and_replace_color(lower=lower_orange, upper=upper_orange, img=img,
+                                                       adjust_list=adjust_value)
+            elif color == 'yellow':
+                lower_yellow = np.array([26, 43, 46], dtype=np.uint8)
+                upper_yellow = np.array([34, 255, 255], dtype=np.uint8)
+                adjust_img = _adjust_and_replace_color(lower=lower_yellow, upper=upper_yellow, img=img,
+                                                       adjust_list=adjust_value)
+            elif color == 'green':
+                lower_green = np.array([35, 43, 46], dtype=np.uint8)
+                upper_green = np.array([99, 255, 255], dtype=np.uint8)
+                adjust_img = _adjust_and_replace_color(lower=lower_green, upper=upper_green, img=img,
+                                                       adjust_list=adjust_value)
+            elif color == 'blue':
+                lower_blue = np.array([100, 43, 46], dtype=np.uint8)
+                upper_blue = np.array([124, 255, 255], dtype=np.uint8)
+                adjust_img = _adjust_and_replace_color(lower=lower_blue, upper=upper_blue, img=img,
+                                                       adjust_list=adjust_value)
+            elif color == 'purple':
+                lower_purple = np.array([125, 43, 46], dtype=np.uint8)
+                upper_purple = np.array([155, 255, 255], dtype=np.uint8)
+                adjust_img = _adjust_and_replace_color(lower=lower_purple, upper=upper_purple, img=img,
+                                                       adjust_list=adjust_value)
+            img = adjust_img
+
+        adjust_img = img
+        img = img_back
+
+        return adjust_img
+
+    @staticmethod
+    def smooth(smooth, image):
         if smooth > 0:
             blurred_image = cv2.GaussianBlur(image, (0, 0), smooth)
             smoothed_image = cv2.addWeighted(image, -0.5, blurred_image, 1.5, 0)
