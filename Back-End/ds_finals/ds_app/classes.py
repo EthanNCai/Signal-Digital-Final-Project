@@ -81,8 +81,7 @@ class ImageFactory:
             '0' is the default value of the exposure operation, that
              means user did not touch this operation, so we just skip it
         """
-        if self.parameter_dict['crop']:
-            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+
         if self.parameter_dict['exposure_contrast'] != 0 or self.parameter_dict['exposure_brightness'] != 0:
             image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['exposure_brightness'], image)
         if self.parameter_dict['brightness'] != 0:
@@ -106,8 +105,10 @@ class ImageFactory:
                 or self.parameter_dict['b_curve'] != [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1]):
             image = self.curve(self.parameter_dict['r_curve'], self.parameter_dict['g_curve'],
                                self.parameter_dict['b_curve'], image)
-        # if self.parameter_dict['dotext'] != False:
-        #    image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
+        if self.parameter_dict['dotext']:
+            image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
+        if self.parameter_dict['crop']:
+            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         return image
 
     @staticmethod
@@ -242,7 +243,7 @@ class ImageFactory:
             x -= text_width // 2
             y -= text_height // 2
 
-            cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (75, 25, 230), 2)
+            cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 5, (75, 25, 230), 10)
 
         return image
 

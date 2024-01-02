@@ -90,7 +90,7 @@ const ProcessPage: React.FC = () => {
     } else {
       sendRequest();
     }
-  }, [crop, r_curve, g_curve, b_curve]);
+  }, [crop, r_curve, g_curve, b_curve, dotext]);
   const sendRequest = () => {
     parameter.brightness = brightness;
     parameter.contrast = contrast;
@@ -104,6 +104,9 @@ const ProcessPage: React.FC = () => {
     parameter.exposure_brightness = exposure_brightness;
     parameter.exposure_contrast = exposure_contrast;
     parameter.hsl = hsl;
+    parameter.position = position;
+    parameter.dotext = dotext;
+    parameter.text = text;
     for (let i = 0; i < 4; i++) {
       parameter.r_curve[2 * i] = r_curve[i].x;
       parameter.r_curve[2 * i + 1] = 1 - r_curve[i].y;
@@ -157,7 +160,7 @@ const ProcessPage: React.FC = () => {
           brightness,
           contrast,
           crop_arg,
-          setExposure: setBrightness,
+          setBrightness,
           setContrast,
           sendRequest,
           serCrop_arg,
@@ -260,6 +263,20 @@ const ProcessPage: React.FC = () => {
                           bottom: `${crop_arg[1]}%`,
                           backgroundColor: "rgba(188, 255, 255, 0.5)",
                           borderRadius: "10px",
+                        }}></div>
+                    )}
+                    {isPreviewText && (
+                      <div
+                        style={{
+                          content: '""',
+                          position: "absolute",
+                          top: `${position[1]}%`,
+                          left: `${position[0]}%`,
+                          right: `${100 - (position[0] + 2)}%`,
+                          bottom: `${100 - (position[1] + 2)}%`,
+                          backgroundColor: "rgba(255, 255, 0, 1)",
+                          borderRadius: "50px",
+                          boxShadow: "1 2 20px rgba(0, 0, 0, 9)",
                         }}></div>
                     )}
                   </Box>

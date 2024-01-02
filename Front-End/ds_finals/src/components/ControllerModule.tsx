@@ -27,16 +27,7 @@ const ControllerModule: React.FC = () => {
     setR_curve,
     setG_curve,
     setB_curve,
-    hue,
-    smooth,
-    temperature,
-    sharp,
-    saturation,
-    brightness,
-    exposure_brightness,
-    exposure_contrast,
-    contrast,
-    setExposure,
+    setBrightness,
     setContrast,
     sendRequest,
     setExposure_contrast,
@@ -57,7 +48,6 @@ const ControllerModule: React.FC = () => {
         <Box sx={{ margin: "15px" }}>
           <Chip label="亮度" />
           <Slider
-            value={brightness}
             min={-10}
             max={10}
             step={1}
@@ -65,7 +55,7 @@ const ControllerModule: React.FC = () => {
             valueLabelDisplay="auto"
             onChange={(event: Event, newValue: number | number[]) => {
               if (typeof newValue === "number") {
-                setExposure(newValue);
+                setBrightness(newValue);
               }
             }}
             onChangeCommitted={() => {
@@ -74,7 +64,6 @@ const ControllerModule: React.FC = () => {
           />
           <Chip label="对比度" />
           <Slider
-            value={contrast}
             min={-10}
             max={10}
             step={1}
@@ -387,7 +376,7 @@ const ControllerModule: React.FC = () => {
                 min={-10}
                 max={10}
                 step={1}
-                defaultValue={7}
+                defaultValue={0}
                 valueLabelDisplay="auto"
                 onChange={(event: Event, newValue: number | number[]) => {
                   if (typeof newValue === "number") {
@@ -405,7 +394,7 @@ const ControllerModule: React.FC = () => {
                 min={-10}
                 max={10}
                 step={1}
-                defaultValue={8}
+                defaultValue={0}
                 valueLabelDisplay="auto"
                 onChange={(event: Event, newValue: number | number[]) => {
                   if (typeof newValue === "number") {

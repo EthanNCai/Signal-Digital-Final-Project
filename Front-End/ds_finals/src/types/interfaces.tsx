@@ -60,7 +60,7 @@ type ParameterContextType = {
   text: string;
   position: number[];
   hsl: number[];
-  setExposure: React.Dispatch<React.SetStateAction<number>>;
+  setBrightness: React.Dispatch<React.SetStateAction<number>>;
   setContrast: React.Dispatch<React.SetStateAction<number>>;
   sendRequest: (params?: any) => void;
   serCrop_arg: (params?: any) => void;
@@ -126,7 +126,7 @@ export const ParameterContext = createContext<ParameterContextType>({
   text: "",
   position: [],
   hsl: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  setExposure: () => {},
+  setBrightness: () => {},
   setContrast: () => {},
   sendRequest: () => {},
   serCrop_arg: () => {},
