@@ -20,7 +20,6 @@ const ControllerModule: React.FC = () => {
     { x: 1, y: 1 },
   ];
 
-  const [hsl, setHsl] = React.useState("female");
   const {
     r_curve,
     g_curve,
@@ -47,94 +46,9 @@ const ControllerModule: React.FC = () => {
     setTemperature,
     setSharp,
     setSaturation,
+    hsl,
+    setHsl,
   } = useContext(ParameterContext);
-  const handleBrightnessChange = (
-    event: Event,
-    newValue: number | number[]
-  ) => {
-    if (typeof newValue === "number") {
-      setExposure(newValue);
-    }
-  };
-  const handleContrastChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleContrastChange = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === "number") {
-      setContrast(newValue);
-    }
-  };
-  const handleBrightnessChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleHueChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleHueChange = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === "number") {
-      setHue(newValue);
-    }
-  };
-  const handleSmoothChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleSmoothChange = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === "number") {
-      setSmooth(newValue);
-    }
-  };
-  const handleTemperatureChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleTemperatureChange = (
-    event: Event,
-    newValue: number | number[]
-  ) => {
-    if (typeof newValue === "number") {
-      setTemperature(newValue);
-    }
-  };
-  const handleSharpChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleSharpChange = (event: Event, newValue: number | number[]) => {
-    if (typeof newValue === "number") {
-      setSharp(newValue);
-    }
-  };
-  const handleExposure_brightnessChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleExposure_brightnessChange = (
-    event: Event,
-    newValue: number | number[]
-  ) => {
-    if (typeof newValue === "number") {
-      setExposure_brightness(newValue);
-    }
-  };
-  const handleExposure_contrastChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleExposure_contrastChange = (
-    event: Event,
-    newValue: number | number[]
-  ) => {
-    if (typeof newValue === "number") {
-      setExposure_contrast(newValue);
-    }
-  };
-  const handleSaturationChangeCommitted = () => {
-    sendRequest();
-  };
-  const handleSaturationChange = (
-    event: Event,
-    newValue: number | number[]
-  ) => {
-    if (typeof newValue === "number") {
-      setSaturation(newValue);
-    }
-  };
 
   return (
     <>
@@ -149,8 +63,14 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleBrightnessChange}
-            onChangeCommitted={handleBrightnessChangeCommitted}
+            onChange={(event: Event, newValue: number | number[]) => {
+              if (typeof newValue === "number") {
+                setExposure(newValue);
+              }
+            }}
+            onChangeCommitted={() => {
+              sendRequest();
+            }}
           />
           <Chip label="对比度" />
           <Slider
@@ -160,8 +80,14 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleContrastChange}
-            onChangeCommitted={handleContrastChangeCommitted}
+            onChange={(event: Event, newValue: number | number[]) => {
+              if (typeof newValue === "number") {
+                setContrast(newValue);
+              }
+            }}
+            onChangeCommitted={() => {
+              sendRequest();
+            }}
           />
           <Chip label="曝光" />
           <Stack direction={"row"}>
@@ -181,8 +107,14 @@ const ControllerModule: React.FC = () => {
               step={1}
               defaultValue={0}
               valueLabelDisplay="auto"
-              onChange={handleExposure_contrastChange}
-              onChangeCommitted={handleExposure_contrastChangeCommitted}
+              onChange={(event: Event, newValue: number | number[]) => {
+                if (typeof newValue === "number") {
+                  setExposure_contrast(newValue);
+                }
+              }}
+              onChangeCommitted={() => {
+                sendRequest();
+              }}
             />
           </Stack>
           <Stack direction={"row"}>
@@ -202,8 +134,14 @@ const ControllerModule: React.FC = () => {
               step={1}
               defaultValue={0}
               valueLabelDisplay="auto"
-              onChange={handleExposure_brightnessChange}
-              onChangeCommitted={handleExposure_brightnessChangeCommitted}
+              onChange={(event: Event, newValue: number | number[]) => {
+                if (typeof newValue === "number") {
+                  setExposure_brightness(newValue);
+                }
+              }}
+              onChangeCommitted={() => {
+                sendRequest();
+              }}
             />
           </Stack>
 
@@ -214,8 +152,14 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleSharpChange}
-            onChangeCommitted={handleSharpChangeCommitted}
+            onChange={(event: Event, newValue: number | number[]) => {
+              if (typeof newValue === "number") {
+                setSharp(newValue);
+              }
+            }}
+            onChangeCommitted={() => {
+              sendRequest();
+            }}
           />
           <Chip label="平滑" />
           <Slider
@@ -224,8 +168,14 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleSmoothChange}
-            onChangeCommitted={handleSmoothChangeCommitted}
+            onChange={(event: Event, newValue: number | number[]) => {
+              if (typeof newValue === "number") {
+                setSmooth(newValue);
+              }
+            }}
+            onChangeCommitted={() => {
+              sendRequest();
+            }}
           />
           <Chip label="色温" />
           <Slider
@@ -234,8 +184,14 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleTemperatureChange}
-            onChangeCommitted={handleTemperatureChangeCommitted}
+            onChange={(event: Event, newValue: number | number[]) => {
+              if (typeof newValue === "number") {
+                setTemperature(newValue);
+              }
+            }}
+            onChangeCommitted={() => {
+              sendRequest();
+            }}
           />
           <Chip label="色调" />
           <Slider
@@ -244,8 +200,14 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleHueChange}
-            onChangeCommitted={handleHueChangeCommitted}
+            onChange={(event: Event, newValue: number | number[]) => {
+              if (typeof newValue === "number") {
+                setHue(newValue);
+              }
+            }}
+            onChangeCommitted={() => {
+              sendRequest();
+            }}
           />
           <Chip label="饱和度" />
           <Slider
@@ -254,8 +216,14 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleSaturationChange}
-            onChangeCommitted={handleSaturationChangeCommitted}
+            onChange={(event: Event, newValue: number | number[]) => {
+              if (typeof newValue === "number") {
+                setSaturation(newValue);
+              }
+            }}
+            onChangeCommitted={() => {
+              sendRequest();
+            }}
           />
         </Box>
         <Box sx={{ margin: "15px", maxWidth: "24%", minWidth: "24%" }}>
@@ -269,11 +237,59 @@ const ControllerModule: React.FC = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="caption">色相</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[0] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">饱和度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[1] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">亮度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[2] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -285,11 +301,59 @@ const ControllerModule: React.FC = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="caption">色相</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[3] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">饱和度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[4] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">亮度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[5] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -301,11 +365,59 @@ const ControllerModule: React.FC = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="caption">色相</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[6] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">饱和度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={7}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[1] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">亮度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={8}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[2] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
             </AccordionDetails>
           </Accordion>{" "}
           <Accordion>
@@ -317,11 +429,59 @@ const ControllerModule: React.FC = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="caption">色相</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[9] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">饱和度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[10] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">亮度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[11] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
             </AccordionDetails>
           </Accordion>{" "}
           <Accordion>
@@ -333,11 +493,59 @@ const ControllerModule: React.FC = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="caption">色相</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[12] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">饱和度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[13] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">亮度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[14] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
             </AccordionDetails>
           </Accordion>{" "}
           <Accordion>
@@ -349,11 +557,59 @@ const ControllerModule: React.FC = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="caption">色相</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[15] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">饱和度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[16] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
               <Typography variant="caption">亮度</Typography>
-              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Slider
+                min={-10}
+                max={10}
+                step={1}
+                defaultValue={0}
+                valueLabelDisplay="auto"
+                onChange={(event: Event, newValue: number | number[]) => {
+                  if (typeof newValue === "number") {
+                    const newhsl = hsl;
+                    newhsl[17] = newValue;
+                    setSaturation(newhsl);
+                  }
+                }}
+                onChangeCommitted={() => {
+                  sendRequest();
+                }}
+              />
             </AccordionDetails>
           </Accordion>
         </Box>

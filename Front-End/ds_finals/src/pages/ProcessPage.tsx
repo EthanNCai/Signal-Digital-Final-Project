@@ -103,6 +103,7 @@ const ProcessPage: React.FC = () => {
     parameter.crop = crop;
     parameter.exposure_brightness = exposure_brightness;
     parameter.exposure_contrast = exposure_contrast;
+    parameter.hsl = hsl;
     for (let i = 0; i < 4; i++) {
       parameter.r_curve[2 * i] = r_curve[i].x;
       parameter.r_curve[2 * i + 1] = 1 - r_curve[i].y;

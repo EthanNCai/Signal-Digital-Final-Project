@@ -160,7 +160,7 @@ class ImageFactory:
             right = int(crop_arg[2] * width / 100)
             top = int(crop_arg[3] * height / 100)
 
-            image = image[bottom:top, left:right]
+            image = image[bottom:top, left:right].copy()
 
         return image
 
