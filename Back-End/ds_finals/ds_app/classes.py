@@ -83,8 +83,8 @@ class ImageFactory:
         """
         if self.parameter_dict['crop']:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
-        # if self.parameter_dict['exposure_contrast'] != 0 and self.parameter_dict['exposure_brightness'] != 0:
-        #    image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['brightness'], image)
+        if self.parameter_dict['exposure_contrast'] != 0 or self.parameter_dict['exposure_brightness'] != 0:
+            image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['exposure_brightness'], image)
         if self.parameter_dict['brightness'] != 0:
             image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:

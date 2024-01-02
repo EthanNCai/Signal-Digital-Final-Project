@@ -1,11 +1,12 @@
 import { Box, Slider, Stack, Chip, Typography } from "@mui/material";
 import { BezierSplineEditor } from "react-bezier-spline-editor/react";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
+
 import React, { useState, useContext } from "react";
 import { ParameterContext } from "../types/interfaces";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 
 type Point = {
   x: number;
@@ -33,17 +34,24 @@ const ControllerModule: React.FC = () => {
     sharp,
     saturation,
     brightness,
+    exposure_brightness,
+    exposure_contrast,
     contrast,
     setExposure,
     setContrast,
     sendRequest,
+    setExposure_contrast,
+    setExposure_brightness,
     setHue,
     setSmooth,
     setTemperature,
     setSharp,
     setSaturation,
   } = useContext(ParameterContext);
-  const handleExposureChange = (event: Event, newValue: number | number[]) => {
+  const handleBrightnessChange = (
+    event: Event,
+    newValue: number | number[]
+  ) => {
     if (typeof newValue === "number") {
       setExposure(newValue);
     }
@@ -56,7 +64,7 @@ const ControllerModule: React.FC = () => {
       setContrast(newValue);
     }
   };
-  const handleExposureChangeCommitted = () => {
+  const handleBrightnessChangeCommitted = () => {
     sendRequest();
   };
   const handleHueChangeCommitted = () => {
@@ -94,6 +102,28 @@ const ControllerModule: React.FC = () => {
       setSharp(newValue);
     }
   };
+  const handleExposure_brightnessChangeCommitted = () => {
+    sendRequest();
+  };
+  const handleExposure_brightnessChange = (
+    event: Event,
+    newValue: number | number[]
+  ) => {
+    if (typeof newValue === "number") {
+      setExposure_brightness(newValue);
+    }
+  };
+  const handleExposure_contrastChangeCommitted = () => {
+    sendRequest();
+  };
+  const handleExposure_contrastChange = (
+    event: Event,
+    newValue: number | number[]
+  ) => {
+    if (typeof newValue === "number") {
+      setExposure_contrast(newValue);
+    }
+  };
   const handleSaturationChangeCommitted = () => {
     sendRequest();
   };
@@ -106,9 +136,6 @@ const ControllerModule: React.FC = () => {
     }
   };
 
-  const handleHslChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHsl((event.target as HTMLInputElement).value);
-  };
   return (
     <>
       <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
@@ -122,8 +149,8 @@ const ControllerModule: React.FC = () => {
             step={1}
             defaultValue={0}
             valueLabelDisplay="auto"
-            onChange={handleExposureChange}
-            onChangeCommitted={handleExposureChangeCommitted}
+            onChange={handleBrightnessChange}
+            onChangeCommitted={handleBrightnessChangeCommitted}
           />
           <Chip label="对比度" />
           <Slider
@@ -145,10 +172,18 @@ const ControllerModule: React.FC = () => {
                 marginTop: "5px",
                 whiteSpace: "nowrap",
               }}
-              fontSize="small">
-              属性A
+              variant="caption">
+              对比
             </Typography>
-            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Slider
+              min={-10}
+              max={10}
+              step={1}
+              defaultValue={0}
+              valueLabelDisplay="auto"
+              onChange={handleExposure_contrastChange}
+              onChangeCommitted={handleExposure_contrastChangeCommitted}
+            />
           </Stack>
           <Stack direction={"row"}>
             <Typography
@@ -158,10 +193,18 @@ const ControllerModule: React.FC = () => {
                 marginTop: "5px",
                 whiteSpace: "nowrap",
               }}
-              fontSize="small">
-              属性B
+              variant="caption">
+              亮度
             </Typography>
-            <Slider defaultValue={50} valueLabelDisplay="auto" />
+            <Slider
+              min={-10}
+              max={10}
+              step={1}
+              defaultValue={0}
+              valueLabelDisplay="auto"
+              onChange={handleExposure_brightnessChange}
+              onChangeCommitted={handleExposure_brightnessChangeCommitted}
+            />
           </Stack>
 
           <Chip label="锐化" />
@@ -215,52 +258,104 @@ const ControllerModule: React.FC = () => {
             onChangeCommitted={handleSaturationChangeCommitted}
           />
         </Box>
-        <Box sx={{ margin: "15px" }}>
-          <FormControl>
-            <Chip label="HSL调色" />
-            <RadioGroup
-              aria-labelledby="demo-controlled-radio-buttons-group"
-              name="controlled-radio-buttons-group"
-              value={hsl}
-              onChange={handleHslChange}>
-              <FormControlLabel
-                value="0"
-                control={<Radio size="small" />}
-                label="红"
-              />
-              <FormControlLabel
-                value="1"
-                control={<Radio size="small" />}
-                label="橙"
-              />
-              <FormControlLabel
-                value="2"
-                control={<Radio size="small" />}
-                label="黄"
-              />
-              <FormControlLabel
-                value="3"
-                control={<Radio size="small" />}
-                label="绿"
-              />
-              <FormControlLabel
-                value="4"
-                control={<Radio size="small" />}
-                label="蓝"
-              />
-              <FormControlLabel
-                value="5"
-                control={<Radio size="small" />}
-                label="紫"
-              />
-            </RadioGroup>
-          </FormControl>
-          <Typography fontSize={"xs"}>色相</Typography>
-          <Slider defaultValue={50} valueLabelDisplay="auto" />
-          <Typography fontSize={"xs"}>饱和度</Typography>
-          <Slider defaultValue={50} valueLabelDisplay="auto" />
-          <Typography fontSize={"xs"}>亮度</Typography>
-          <Slider defaultValue={50} valueLabelDisplay="auto" />
+        <Box sx={{ margin: "15px", maxWidth: "24%", minWidth: "24%" }}>
+          <Chip label="HSL" sx={{ margin: "10px" }} />
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header">
+              <Typography>红</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="caption">色相</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">饱和度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">亮度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2a-content"
+              id="panel2a-header">
+              <Typography>橙</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="caption">色相</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">饱和度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">亮度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2a-content"
+              id="panel3a-header">
+              <Typography>黄</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="caption">色相</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">饱和度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">亮度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+            </AccordionDetails>
+          </Accordion>{" "}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2a-content"
+              id="panel4a-header">
+              <Typography>绿</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="caption">色相</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">饱和度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">亮度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+            </AccordionDetails>
+          </Accordion>{" "}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2a-content"
+              id="panel5a-header">
+              <Typography>蓝</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="caption">色相</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">饱和度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">亮度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+            </AccordionDetails>
+          </Accordion>{" "}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2a-content"
+              id="panel6a-header">
+              <Typography>紫</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="caption">色相</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">饱和度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+              <Typography variant="caption">亮度</Typography>
+              <Slider defaultValue={50} valueLabelDisplay="auto" />
+            </AccordionDetails>
+          </Accordion>
         </Box>
         <Box sx={{}}>
           <Box
@@ -269,6 +364,7 @@ const ControllerModule: React.FC = () => {
               justifyContent: "center",
               alignItems: "center",
               margin: "15px",
+              marginRight: "55px",
             }}>
             <Stack>
               <Chip label="红色通道曲线" size="small" />

@@ -139,6 +139,9 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
           <Button sx={{ margin: "5px" }} variant="contained">
             直方图均衡化
           </Button>
+          <Button sx={{ margin: "5px" }} variant="contained">
+            自动美颜
+          </Button>
           <ButtonGroup>
             <Button variant="outlined">左转</Button>
             <Button variant="outlined">右转</Button>

@@ -6,6 +6,16 @@ export type Md5 = {
 };
 
 export interface Parameter_Dict {
+  exposure_contrast: number;
+  exposure_brightness: number;
+  beauty: boolean;
+  histeq: boolean;
+  left_turn: false;
+  right_turn: false;
+  text: string;
+  dotext: boolean;
+  position: number[];
+  hsl: number[];
   hue: number;
   smooth: number;
   temperature: number;
@@ -41,6 +51,15 @@ type ParameterContextType = {
   brightness: number;
   contrast: number;
   crop_arg: number[];
+  exposure_contrast: number;
+  exposure_brightness: number;
+  beauty: boolean;
+  histeq: boolean;
+  left_turn: boolean;
+  right_turn: boolean;
+  text: string;
+  position: number[];
+  hsl: number[];
   setExposure: React.Dispatch<React.SetStateAction<number>>;
   setContrast: React.Dispatch<React.SetStateAction<number>>;
   sendRequest: (params?: any) => void;
@@ -57,6 +76,15 @@ type ParameterContextType = {
   setR_curve: (params?: any) => void;
   setG_curve: (params?: any) => void;
   setB_curve: (params?: any) => void;
+  setExposure_contrast: (params?: any) => void;
+  setExposure_brightness: (params?: any) => void;
+  setBeauty: (params?: any) => void;
+  setHisteq: (params?: any) => void;
+  setLeft_turn: (params?: any) => void;
+  setRight_turn: (params?: any) => void;
+  setText: (params?: any) => void;
+  setPosition: (params?: any) => void;
+  setHsl: (params?: any) => void;
 };
 export const ParameterContext = createContext<ParameterContextType>({
   r_curve: [
@@ -89,6 +117,15 @@ export const ParameterContext = createContext<ParameterContextType>({
   brightness: 0,
   contrast: 0,
   crop_arg: [0, 0, 0, 0],
+  exposure_contrast: 0,
+  exposure_brightness: 0,
+  beauty: false,
+  histeq: false,
+  left_turn: false,
+  right_turn: false,
+  text: "",
+  position: [],
+  hsl: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   setExposure: () => {},
   setContrast: () => {},
   sendRequest: () => {},
@@ -105,4 +142,13 @@ export const ParameterContext = createContext<ParameterContextType>({
   setR_curve: () => {},
   setG_curve: () => {},
   setB_curve: () => {},
+  setExposure_contrast: () => {},
+  setExposure_brightness: () => {},
+  setBeauty: () => {},
+  setHisteq: () => {},
+  setLeft_turn: () => {},
+  setRight_turn: () => {},
+  setText: () => {},
+  setPosition: () => {},
+  setHsl: () => {},
 });
