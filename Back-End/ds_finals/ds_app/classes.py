@@ -51,7 +51,7 @@ class Face:
             self.face = self.img[y:y + h, x:x + w]
             return self.face, self.face_pos[0]
 
-    # Segment Face
+    # Segment Face 打勾
     def segment_face(self, model):
 
         h, w, _ = self.face.shape
