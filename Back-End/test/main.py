@@ -69,6 +69,7 @@ hue_values = [3, -10, 10, 5, -7]
 temperature_values = [3, -10, 10, 5, -7]
 smooth_values = [0, 10, 5, 7, 3]
 sharp_values = [0, 10, 5, 7, 3]
+sharp_values = [True, True, True, True, True]
 
 parameter_combinations = product(contrast_values, brightness_values, turn_values, crop_values, saturation_values,
                                  hue_values, temperature_values, smooth_values, sharp_values)

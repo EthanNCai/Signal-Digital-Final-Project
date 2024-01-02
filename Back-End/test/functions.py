@@ -1,11 +1,53 @@
 import cv2
 import numpy as np
 from pathlib import Path
+from ds_finals.ds_app.classes import Face
+import torchvision.transforms as transforms
+from torchvision import models
+import torch.nn.functional as F
+import torch
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[1]  # root directory
 FONT = ROOT / 'font'
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# 美颜
+def apply_beauty_filter(beauty, image):
+
+    face = Face(image)
+
+    face_det, face_pos = face.detect_faces()
+
+    lw = max(round(sum(image.shape) / 2 * 0.003), 2)
+
+    if face_det == None:
+
+        return False
+        
+    else:
+
+        model = face.load_deep_lab_model().to(device)
+
+        # 分割
+        face_seg = face.segment_face(model)
+
+        # 调用美颜API
+        face_beauty = face.beauty_face()
+
+        image = cv2.rectangle(
+            image,
+            (face_pos[0], face_pos[1]),
+            (face_pos[0] + face_pos[3], face_pos[1] + face_pos[4]),
+            (75, 25, 230),
+            lw,
+            cv2.LINE_AA
+        )
+
+        # 替换原始图像中的人脸区域
+        image[face_pos[1]:(face_pos[1] + face_pos[4]), face_pos[0]:(face_pos[0] + face_pos[3])] = face_beauty
+
+    return image
 
 def contrast(factor, image):
     # TODO: Add contrast logic here using the 'factor' parameter

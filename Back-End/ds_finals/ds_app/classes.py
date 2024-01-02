@@ -177,6 +177,9 @@ class ImageFactory:
                               self.parameter_dict['position'], image)
         if self.parameter_dict['crop']:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+        if self.parameter_dict['beauty']:
+            image = self.apply_beauty_filter(self.parameter_dict['beauty'], image)
+            
         return image
 
     @staticmethod
@@ -465,37 +468,37 @@ class ImageFactory:
 
     # 美颜
     def apply_beauty_filter(beauty, image):
+        if beauty:
+            face = Face(image)
 
-        face = Face(image)
+            face_det, face_pos = face.detect_faces()
 
-        face_det, face_pos = face.detect_faces()
+            lw = max(round(sum(image.shape) / 2 * 0.003), 2)
 
-        lw = max(round(sum(image.shape) / 2 * 0.003), 2)
+            if face_det == None:
 
-        if face_det == None:
+                return False
+                
+            else:
 
-            return False
-            
-        else:
+                model = face.load_deep_lab_model().to(device)
 
-            model = face.load_deep_lab_model().to(device)
+                # 分割
+                face_seg = face.segment_face(model)
 
-            # 分割
-            face_seg = face.segment_face(model)
+                # 调用美颜API
+                face_beauty = face.beauty_face()
 
-            # 调用美颜API
-            face_beauty = face.beauty_face()
+                image = cv2.rectangle(
+                    image,
+                    (face_pos[0], face_pos[1]),
+                    (face_pos[0] + face_pos[3], face_pos[1] + face_pos[4]),
+                    (75, 25, 230),
+                    lw,
+                    cv2.LINE_AA
+                )
 
-            image = cv2.rectangle(
-                image,
-                (face_pos[0], face_pos[1]),
-                (face_pos[0] + face_pos[3], face_pos[1] + face_pos[4]),
-                (75, 25, 230),
-                lw,
-                cv2.LINE_AA
-            )
+                # 替换原始图像中的人脸区域
+                image[face_pos[1]:(face_pos[1] + face_pos[4]), face_pos[0]:(face_pos[0] + face_pos[3])] = face_beauty
 
-            # 替换原始图像中的人脸区域
-            image[face_pos[1]:(face_pos[1] + face_pos[4]), face_pos[0]:(face_pos[0] + face_pos[3])] = face_beauty
-
-        return image
+            return image
