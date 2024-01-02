@@ -247,7 +247,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[0] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -265,7 +265,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[1] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -283,7 +283,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[2] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -311,7 +311,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[3] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -329,7 +329,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[4] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -347,7 +347,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[5] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -375,7 +375,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[6] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -393,7 +393,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[1] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -411,7 +411,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[2] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -439,7 +439,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[9] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -457,7 +457,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[10] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -475,7 +475,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[11] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -503,7 +503,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[12] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -521,7 +521,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[13] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -539,7 +539,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[14] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -567,7 +567,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[15] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -585,7 +585,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[16] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
@@ -603,7 +603,7 @@ const ControllerModule: React.FC = () => {
                   if (typeof newValue === "number") {
                     const newhsl = hsl;
                     newhsl[17] = newValue;
-                    setSaturation(newhsl);
+                    setHsl(newhsl);
                   }
                 }}
                 onChangeCommitted={() => {
