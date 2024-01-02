@@ -137,11 +137,11 @@ class ImageFactory:
             image = self.curve(self.parameter_dict['r_curve'], self.parameter_dict['g_curve'],
                                self.parameter_dict['b_curve'], image)
         if self.parameter_dict['dotext']:
-            image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
+            image = self.text(self.parameter_dict['dotext'], self.parameter_dict['text'],
+                              self.parameter_dict['position'], image)
         if self.parameter_dict['crop']:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         return image
-
 
     @staticmethod
     def exposure(contrast, light, image):
@@ -151,7 +151,6 @@ class ImageFactory:
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
-
     @staticmethod
     def brightness(brightness, image):
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -160,7 +159,6 @@ class ImageFactory:
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
-
     @staticmethod
     def contrast(contrast, image):
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -168,7 +166,6 @@ class ImageFactory:
         image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10) / 20 * 2)
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
-
 
     @staticmethod
     def turn(right_turn, left_turn, image):
@@ -182,7 +179,6 @@ class ImageFactory:
             image = cv2.flip(image, flipCode=0)
 
         return image
-
 
     @staticmethod
     def crop(crop, crop_arg, image):
@@ -199,7 +195,6 @@ class ImageFactory:
 
         return image
 
-
     @staticmethod
     def saturation(saturation, image):
         # TODO: Image Saturation
@@ -211,7 +206,6 @@ class ImageFactory:
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
 
-
     @staticmethod
     def hue(hue, image):
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -222,14 +216,12 @@ class ImageFactory:
         # Convert back to BGR
         return np.clip(cv2.cvtColor(image_hsv, cv2.COLOR_HSV2BGR), 0, 255)
 
-
     @staticmethod
     def temperature(temperature, image):
         temperature = temperature * 10
         result = np.clip(image + [-temperature // 2, 0, temperature // 2], 0, 255).astype(np.uint8)
 
         return result
-
 
     @staticmethod
     def sharp(sharp, image):
@@ -242,7 +234,6 @@ class ImageFactory:
             sharpened_image = image
 
         return sharpened_image
-
 
     @staticmethod
     def histeq(his_sw, image):
@@ -258,7 +249,6 @@ class ImageFactory:
             adjusted_img = img
 
         return adjusted_img
-
 
     @staticmethod
     def hsl(param_list, image):
@@ -308,9 +298,6 @@ class ImageFactory:
 
         return adjust_img
 
-
-
-
     @staticmethod
     def smooth(smooth, image):
         if smooth > 0:
@@ -320,7 +307,6 @@ class ImageFactory:
             smoothed_image = image
 
         return smoothed_image
-
 
     @staticmethod
     def text(dotext, text, position, image):
@@ -349,7 +335,6 @@ class ImageFactory:
             cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 5, (75, 25, 230), 10)
 
         return image
-
 
     @staticmethod
     def curve(input_r, input_g, input_b, image):
@@ -420,4 +405,3 @@ class ImageFactory:
         adjusted_image = cv2.merge((adjusted_blue_channel, adjusted_green_channel, adjusted_red_channel))
         adjusted_image = adjusted_image.astype(np.uint8)
         return adjusted_image
-
