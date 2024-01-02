@@ -15,11 +15,20 @@ export interface Parameter_Dict {
   contrast: number;
   crop_arg: number[];
   crop: boolean;
+  r_curve: number[];
+  g_curve: number[];
+  b_curve: number[];
 }
 
 export {};
-
+type Point = {
+  x: number;
+  y: number;
+};
 type ParameterContextType = {
+  r_curve: Point[];
+  g_curve: Point[];
+  b_curve: Point[];
   dotext: boolean;
   crop: boolean;
   isPreviewText: boolean;
@@ -45,8 +54,29 @@ type ParameterContextType = {
   setIsPreviewCrop: (params?: any) => void;
   setCrop: (params?: any) => void;
   setDotext: (params?: any) => void;
+  setR_curve: (params?: any) => void;
+  setG_curve: (params?: any) => void;
+  setB_curve: (params?: any) => void;
 };
 export const ParameterContext = createContext<ParameterContextType>({
+  r_curve: [
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ],
+  g_curve: [
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ],
+  b_curve: [
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ],
   dotext: false,
   crop: false,
   isPreviewText: false,
@@ -72,4 +102,7 @@ export const ParameterContext = createContext<ParameterContextType>({
   setIsPreviewCrop: () => {},
   setCrop: () => {},
   setDotext: () => {},
+  setR_curve: () => {},
+  setG_curve: () => {},
+  setB_curve: () => {},
 });

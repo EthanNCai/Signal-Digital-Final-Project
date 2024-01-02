@@ -10,6 +10,25 @@ FONT = ROOT / 'font'
 image_extensions = ['.png', '.jpeg', '.jpg']
 
 
+def calculate_bezier_point(P0, P1, P2, P3, t):
+    u = 1 - t
+    tt = t * t
+    uu = u * u
+    uuu = uu * u
+    ttt = tt * t
+
+    x = uuu * P0.x + 3 * uu * t * P1.x + 3 * u * tt * P2.x + ttt * P3.x
+    y = uuu * P0.y + 3 * uu * t * P1.y + 3 * u * tt * P2.y + ttt * P3.y
+
+    return Point(x, y)
+
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
 class TargetImage:
 
     def __init__(self, md5):
@@ -62,17 +81,16 @@ class ImageFactory:
             '0' is the default value of the exposure operation, that
              means user did not touch this operation, so we just skip it
         """
-
-        #if self.parameter_dict['exposure_contrast'] != 0 and self.parameter_dict['exposure_brightness'] != 0:
+        if self.parameter_dict['crop']:
+            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+        # if self.parameter_dict['exposure_contrast'] != 0 and self.parameter_dict['exposure_brightness'] != 0:
         #    image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['brightness'], image)
         if self.parameter_dict['brightness'] != 0:
             image = self.brightness(self.parameter_dict['brightness'], image)
         if self.parameter_dict['contrast'] != 0:
             image = self.contrast(self.parameter_dict['contrast'], image)
-        #if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
+        # if self.parameter_dict['left_turn'] != False or self.parameter_dict['right_turn'] != False:
         #    image = self.turn(self.parameter_dict['left_turn'], self.parameter_dict['right_turn'], image)
-        if self.parameter_dict['crop']:
-            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         if self.parameter_dict['hue'] != 0:
             image = self.hue(self.parameter_dict['hue'], image)
         if self.parameter_dict['temperature'] != 0:
@@ -83,16 +101,21 @@ class ImageFactory:
             image = self.sharp(self.parameter_dict['sharp'], image)
         if self.parameter_dict['smooth'] != 0:
             image = self.smooth(self.parameter_dict['smooth'], image)
-        #if self.parameter_dict['dotext'] != False:
+        if (self.parameter_dict['r_curve'] != [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1]
+                or self.parameter_dict['g_curve'] != [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1]
+                or self.parameter_dict['b_curve'] != [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1]):
+            image = self.curve(self.parameter_dict['r_curve'], self.parameter_dict['g_curve'],
+                               self.parameter_dict['b_curve'], image)
+        # if self.parameter_dict['dotext'] != False:
         #    image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
         return image
-        
+
     @staticmethod
     def exposure(contrast, light, image):
 
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast+10)/20 * 2, beta= light * 10)
+        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10) / 20 * 2, beta=light * 10)
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
@@ -100,19 +123,19 @@ class ImageFactory:
     def brightness(brightness, image):
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        image_hls = cv2.convertScaleAbs(image_hls, beta= brightness * 10)
+        image_hls = cv2.convertScaleAbs(image_hls, beta=brightness * 10)
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
     @staticmethod
     def contrast(contrast, image):
-        
+
         image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        
-        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10 ) / 20 * 2)
+
+        image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10) / 20 * 2)
 
         return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
-    
+
     @staticmethod
     def turn(right_turn, left_turn, image):
         # TODO: Control the rotation of the image by right_turn, left_turn
@@ -166,11 +189,11 @@ class ImageFactory:
     @staticmethod
     def temperature(temperature, image):
 
-        temperature = temperature*10
+        temperature = temperature * 10
         result = np.clip(image + [-temperature // 2, 0, temperature // 2], 0, 255).astype(np.uint8)
-    
+
         return result
-    
+
     @staticmethod
     def sharp(sharp, image):
 
@@ -222,3 +245,73 @@ class ImageFactory:
             cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (75, 25, 230), 2)
 
         return image
+
+    @staticmethod
+    def curve(input_r, input_g, input_b, image):
+        # 定义红色通道的控制点
+        P0_r = Point(input_r[0], 1 - input_r[1])
+        P1_r = Point(input_r[2], 1 - input_r[3])  # 控制点1
+        P2_r = Point(input_r[4], 1 - input_r[5])  # 控制点2
+        P3_r = Point(input_r[6], 1 - input_r[7])
+
+        # 定义绿色通道的控制点
+        P0_g = Point(input_g[0], 1 - input_g[1])
+        P1_g = Point(input_g[2], 1 - input_g[3])  # 控制点1
+        P2_g = Point(input_g[4], 1 - input_g[5])  # 控制点2
+        P3_g = Point(input_g[6], 1 - input_g[7])
+
+        # 定义蓝色通道的控制点
+        P0_b = Point(input_b[0], 1 - input_b[1])
+        P1_b = Point(input_b[2], 1 - input_b[3])  # 控制点1
+        P2_b = Point(input_b[4], 1 - input_b[5])  # 控制点2
+        P3_b = Point(input_b[6], 1 - input_b[7])
+
+        # 计算曲线上的点
+        points = []
+        num_points = 256  # 用于绘制曲线的点的数量
+
+        for i in range(num_points):
+            t = i / (num_points - 1)
+            point_r = calculate_bezier_point(P0_r, P1_r, P2_r, P3_r, t)
+            point_g = calculate_bezier_point(P0_g, P1_g, P2_g, P3_g, t)
+            point_b = calculate_bezier_point(P0_b, P1_b, P2_b, P3_b, t)
+            points.append((point_r, point_g, point_b))
+
+        # 提取 x 和 y 坐标
+        x_coords = [point[0].x * 255 for point in points]
+        y_coords_r = [point[0].y * 255 for point in points]
+        y_coords_g = [point[1].y * 255 for point in points]
+        y_coords_b = [point[2].y * 255 for point in points]
+
+        # 分离RGB通道
+        blue_channel, green_channel, red_channel = cv2.split(image)
+
+        # 应用曲线映射变换到红色通道
+        red_hist, red_bins = np.histogram(red_channel.flatten(), 256, [0, 256])  # 计算红色通道直方续：
+
+        green_hist, green_bins = np.histogram(green_channel.flatten(), 256, [0, 256])  # 计算绿色通道直方图
+        blue_hist, blue_bins = np.histogram(blue_channel.flatten(), 256, [0, 256])  # 计算蓝色通道直方图
+
+        # 进行曲线映射变换
+        red_cdf = red_hist.cumsum()  # 计算红色通道累积分布函数
+        red_cdf_normalized = red_cdf / red_cdf[-1]  # 归一化
+        lookup_table_r = np.interp(np.arange(256), x_coords, y_coords_r).astype(np.uint8)
+        adjusted_red_channel = np.interp(red_channel.flatten(), red_bins[:-1], lookup_table_r).reshape(
+            red_channel.shape)
+
+        green_cdf = green_hist.cumsum()  # 计算绿色通道累积分布函数
+        green_cdf_normalized = green_cdf / green_cdf[-1]  # 归一化
+        lookup_table_g = np.interp(np.arange(256), x_coords, y_coords_g).astype(np.uint8)
+        adjusted_green_channel = np.interp(green_channel.flatten(), green_bins[:-1], lookup_table_g).reshape(
+            green_channel.shape)
+
+        blue_cdf = blue_hist.cumsum()  # 计算蓝色通道累积分布函数
+        blue_cdf_normalized = blue_cdf / blue_cdf[-1]  # 归一化
+        lookup_table_b = np.interp(np.arange(256), x_coords, y_coords_b).astype(np.uint8)
+        adjusted_blue_channel = np.interp(blue_channel.flatten(), blue_bins[:-1], lookup_table_b).reshape(
+            blue_channel.shape)
+
+        # 将调整后的通道重新合并为图像
+        adjusted_image = cv2.merge((adjusted_blue_channel, adjusted_green_channel, adjusted_red_channel))
+        adjusted_image = adjusted_image.astype(np.uint8)
+        return adjusted_image

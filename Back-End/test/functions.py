@@ -1,9 +1,11 @@
 import cv2
 import numpy as np
 from pathlib import Path
+
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[1]  # root directory
 FONT = ROOT / 'font'
+
 
 def contrast(factor, image):
     # TODO: Add contrast logic here using the 'factor' parameter
@@ -44,10 +46,9 @@ def brightness(factor, image):
 
 
 def exposure_api(contrast, light, image):
-
     image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast+10)/20 * 2, beta= light * 10)
+    image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10) / 20 * 2, beta=light * 10)
 
     return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
@@ -55,16 +56,15 @@ def exposure_api(contrast, light, image):
 def light_api(light, image):
     image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    image_hls = cv2.convertScaleAbs(image_hls, beta= light * 10)
+    image_hls = cv2.convertScaleAbs(image_hls, beta=light * 10)
 
     return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
 
 def contrast_api(contrast, image):
-    
     image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    
-    image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10 ) / 20 * 2)
+
+    image_hls = cv2.convertScaleAbs(image_hls, alpha=(contrast + 10) / 20 * 2)
 
     return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_RGB2BGR), 0, 255)
 
@@ -82,7 +82,6 @@ def turn(right_turn, left_turn, image):
 
 
 def crop(crop, crop_arg, image):
-
     if crop:
         height, width, _ = image.shape
 
@@ -97,40 +96,36 @@ def crop(crop, crop_arg, image):
 
 
 def saturation(saturation, image):
-    
     image_hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
-    
+
     saturation = (saturation + 10) / 20 * 2
 
     image_hls[:, :, 2] = np.clip(image_hls[:, :, 2] * saturation, 0, 255)
-    
+
     return np.clip(cv2.cvtColor(image_hls, cv2.COLOR_HLS2BGR), 0, 255)
 
 
 def hue(hue, image):
-
     image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Adjust hue
-    image_hsv[:, :, 0] = (image_hsv[:, :, 0] + hue*10) % 180
+    image_hsv[:, :, 0] = (image_hsv[:, :, 0] + hue * 10) % 180
 
     # Convert back to BGR
     return np.clip(cv2.cvtColor(image_hsv, cv2.COLOR_HSV2BGR), 0, 255)
 
 
 def temperature(temperature, image):
-
-    temperature = temperature*10
+    temperature = temperature * 10
     result = np.clip(image + [-temperature // 2, 0, temperature // 2], 0, 255).astype(np.uint8)
-    
+
     return result
 
 
 def sharp(sharp, image):
-
     if sharp > 0:
         kernel = np.array([[0, -sharp, 0],
-                           [-sharp, 1 + 4*sharp, -sharp],
+                           [-sharp, 1 + 4 * sharp, -sharp],
                            [0, -sharp, 0]])
         sharpened_image = cv2.filter2D(image, -1, kernel)
     else:
@@ -140,12 +135,11 @@ def sharp(sharp, image):
 
 
 def smooth(smooth, image):
-
     if smooth > 0:
         blurred_image = cv2.GaussianBlur(image, (0, 0), smooth)
         smoothed_image = cv2.addWeighted(image, -0.5, blurred_image, 1.5, 0)
     else:
-        smoothed_image = image  
+        smoothed_image = image
 
     return smoothed_image
 
@@ -176,3 +170,95 @@ def text(dotext, text, position, image):
         cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (75, 25, 230), 2)
 
     return image
+
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
+def calculate_bezier_point(P0, P1, P2, P3, t):
+    u = 1 - t
+    tt = t * t
+    uu = u * u
+    uuu = uu * u
+    ttt = tt * t
+
+    x = uuu * P0.x + 3 * uu * t * P1.x + 3 * u * tt * P2.x + ttt * P3.x
+    y = uuu * P0.y + 3 * uu * t * P1.y + 3 * u * tt * P2.y + ttt * P3.y
+
+    return Point(x, y)
+
+
+def curve(input_r, input_g, input_b):
+    # 定义红色通道的控制点
+    P0_r = Point(input_r[0], 1 - input_r[1])
+    P1_r = Point(input_r[2], 1 - input_r[3])  # 控制点1
+    P2_r = Point(input_r[4], 1 - input_r[5])  # 控制点2
+    P3_r = Point(input_r[6], 1 - input_r[7])
+
+    # 定义绿色通道的控制点
+    P0_g = Point(input_g[0], 1 - input_g[1])
+    P1_g = Point(input_g[2], 1 - input_g[3])  # 控制点1
+    P2_g = Point(input_g[4], 1 - input_g[5])  # 控制点2
+    P3_g = Point(input_g[6], 1 - input_g[7])
+
+    # 定义蓝色通道的控制点
+    P0_b = Point(input_b[0], 1 - input_b[1])
+    P1_b = Point(input_b[2], 1 - input_b[3])  # 控制点1
+    P2_b = Point(input_b[4], 1 - input_b[5])  # 控制点2
+    P3_b = Point(input_b[6], 1 - input_b[7])
+
+    # 计算曲线上的点
+    points = []
+    num_points = 256  # 用于绘制曲线的点的数量
+
+    for i in range(num_points):
+        t = i / (num_points - 1)
+        point_r = calculate_bezier_point(P0_r, P1_r, P2_r, P3_r, t)
+        point_g = calculate_bezier_point(P0_g, P1_g, P2_g, P3_g, t)
+        point_b = calculate_bezier_point(P0_b, P1_b, P2_b, P3_b, t)
+        points.append((point_r, point_g, point_b))
+
+    # 提取 x 和 y 坐标
+    x_coords = [point[0].x * 255 for point in points]
+    y_coords_r = [point[0].y * 255 for point in points]
+    y_coords_g = [point[1].y * 255 for point in points]
+    y_coords_b = [point[2].y * 255 for point in points]
+
+    # 读取图像并将其转换为RGB图像
+    image_path = "test.jpg"  # 替换为你的图片路径
+    image = cv2.imread(image_path)
+
+    # 分离RGB通道
+    blue_channel, green_channel, red_channel = cv2.split(image)
+
+    # 应用曲线映射变换到红色通道
+    red_hist, red_bins = np.histogram(red_channel.flatten(), 256, [0, 256])  # 计算红色通道直方续：
+
+    green_hist, green_bins = np.histogram(green_channel.flatten(), 256, [0, 256])  # 计算绿色通道直方图
+    blue_hist, blue_bins = np.histogram(blue_channel.flatten(), 256, [0, 256])  # 计算蓝色通道直方图
+
+    # 进行曲线映射变换
+    red_cdf = red_hist.cumsum()  # 计算红色通道累积分布函数
+    red_cdf_normalized = red_cdf / red_cdf[-1]  # 归一化
+    lookup_table_r = np.interp(np.arange(256), x_coords, y_coords_r).astype(np.uint8)
+    adjusted_red_channel = np.interp(red_channel.flatten(), red_bins[:-1], lookup_table_r).reshape(red_channel.shape)
+
+    green_cdf = green_hist.cumsum()  # 计算绿色通道累积分布函数
+    green_cdf_normalized = green_cdf / green_cdf[-1]  # 归一化
+    lookup_table_g = np.interp(np.arange(256), x_coords, y_coords_g).astype(np.uint8)
+    adjusted_green_channel = np.interp(green_channel.flatten(), green_bins[:-1], lookup_table_g).reshape(
+        green_channel.shape)
+
+    blue_cdf = blue_hist.cumsum()  # 计算蓝色通道累积分布函数
+    blue_cdf_normalized = blue_cdf / blue_cdf[-1]  # 归一化
+    lookup_table_b = np.interp(np.arange(256), x_coords, y_coords_b).astype(np.uint8)
+    adjusted_blue_channel = np.interp(blue_channel.flatten(), blue_bins[:-1], lookup_table_b).reshape(
+        blue_channel.shape)
+
+    # 将调整后的通道重新合并为图像
+    adjusted_image = cv2.merge((adjusted_blue_channel, adjusted_green_channel, adjusted_red_channel))
+    adjusted_image = adjusted_image.astype(np.uint8)
+    return adjusted_image

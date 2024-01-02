@@ -4,25 +4,29 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-
 import React, { useState, useContext } from "react";
 import { ParameterContext } from "../types/interfaces";
+
+type Point = {
+  x: number;
+  y: number;
+};
 const ControllerModule: React.FC = () => {
-  type Point = {
-    x: number;
-    y: number;
-  };
   const initial_points: Point[] = [
     { x: 0, y: 0 },
     { x: 0.25, y: 0.25 },
     { x: 0.75, y: 0.75 },
     { x: 1, y: 1 },
   ];
-  const [points, setPoints] = useState<Point[]>(initial_points);
-  const [points2, setPoints2] = useState<Point[]>(initial_points);
-  const [points3, setPoints3] = useState<Point[]>(initial_points);
+
   const [hsl, setHsl] = React.useState("female");
   const {
+    r_curve,
+    g_curve,
+    b_curve,
+    setR_curve,
+    setG_curve,
+    setB_curve,
     hue,
     smooth,
     temperature,
@@ -269,12 +273,12 @@ const ControllerModule: React.FC = () => {
             <Stack>
               <Chip label="红色通道曲线" size="small" />
               <BezierSplineEditor
-                showPoints={false}
+                showPoints={true}
                 indicatorSpeed={100}
                 width={100}
                 height={100}
-                points={points}
-                onPointsChange={setPoints}
+                points={r_curve}
+                onPointsChange={setR_curve}
                 controlPointProps={{
                   r: 5,
                   fill: "#EF4040", //red
@@ -290,12 +294,12 @@ const ControllerModule: React.FC = () => {
               <Chip label="绿色通道曲线" size="small" />
 
               <BezierSplineEditor
-                showPoints={false}
+                showPoints={true}
                 indicatorSpeed={100}
                 width={100}
                 height={100}
-                points={points2}
-                onPointsChange={setPoints2}
+                points={g_curve}
+                onPointsChange={setG_curve}
                 controlPointProps={{
                   r: 5,
                   fill: "#65B741", //green
@@ -311,12 +315,12 @@ const ControllerModule: React.FC = () => {
               <Chip label="蓝色通道曲线" size="small" />
 
               <BezierSplineEditor
-                showPoints={false}
+                showPoints={true}
                 indicatorSpeed={100}
                 width={100}
                 height={100}
-                points={points3}
-                onPointsChange={setPoints3}
+                points={b_curve}
+                onPointsChange={setB_curve}
                 controlPointProps={{
                   r: 5,
                   fill: "#6DB9EF", //blue

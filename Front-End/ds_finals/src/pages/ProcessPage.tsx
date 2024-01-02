@@ -5,7 +5,10 @@ import SPControllerModule from "../components/SPControllerModule";
 import { Typography } from "antd";
 import { ParameterContext, Parameter_Dict } from "../types/interfaces";
 const { Title, Paragraph } = Typography;
-
+type Point = {
+  x: number;
+  y: number;
+};
 const ProcessPage: React.FC = () => {
   var parameter: Parameter_Dict = {
     crop: false,
@@ -17,7 +20,28 @@ const ProcessPage: React.FC = () => {
     brightness: 0,
     contrast: 0,
     crop_arg: [0, 0, 100, 100],
+    r_curve: [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1],
+    g_curve: [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1],
+    b_curve: [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1],
   };
+  const [r_curve, setR_curve] = useState<Point[]>([
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ]);
+  const [g_curve, setG_curve] = useState<Point[]>([
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ]);
+  const [b_curve, setB_curve] = useState<Point[]>([
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ]);
   const [isPreviewText, setIsPreviewText] = useState(false);
   const [isPreviewCrop, setIsPreviewCrop] = useState(false);
   const [crop, setCrop] = useState(false);
@@ -46,7 +70,7 @@ const ProcessPage: React.FC = () => {
     } else {
       sendRequest();
     }
-  }, [crop]);
+  }, [crop, r_curve, g_curve, b_curve]);
   const sendRequest = () => {
     parameter.brightness = brightness;
     parameter.contrast = contrast;
@@ -57,6 +81,14 @@ const ProcessPage: React.FC = () => {
     parameter.temperature = temperature;
     parameter.crop_arg = crop_arg;
     parameter.crop = crop;
+    for (let i = 0; i < 4; i++) {
+      parameter.r_curve[2 * i] = r_curve[i].x;
+      parameter.r_curve[2 * i + 1] = 1 - r_curve[i].y;
+      parameter.g_curve[2 * i] = g_curve[i].x;
+      parameter.g_curve[2 * i + 1] = 1 - g_curve[i].y;
+      parameter.b_curve[2 * i] = b_curve[i].x;
+      parameter.b_curve[2 * i + 1] = 1 - b_curve[i].y;
+    }
     console.log(crop);
     fetch(`http://127.0.0.1:8000/api/image_operation/${md5}`, {
       method: "POST",
@@ -78,6 +110,9 @@ const ProcessPage: React.FC = () => {
       {" "}
       <ParameterContext.Provider
         value={{
+          r_curve,
+          g_curve,
+          b_curve,
           crop,
           dotext,
           isPreviewText,
@@ -103,6 +138,9 @@ const ProcessPage: React.FC = () => {
           setIsPreviewCrop,
           setCrop,
           setDotext,
+          setR_curve,
+          setG_curve,
+          setB_curve,
         }}>
         <Box
           sx={{
