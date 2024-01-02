@@ -1,5 +1,5 @@
 import cv2
-from functions import brightness, contrast
+from functions import brightness, contrast, histeq, hsl
 from itertools import product
 
 image_path = 'test.jpeg'
@@ -30,7 +30,6 @@ def crop(parameter1,parameter2,image)
 * image         是一个cv2的BGR图像矩阵
 """
 
-
 """
 如何测试?
 
@@ -44,22 +43,30 @@ def crop(parameter1,parameter2,image)
 """
 # 5 test points per parameter
 # DO NOT test the DEFAULT VALUE (for example, 0 or [0,0,0,0])
-# test some risk points
-contrast_values = [-10, -5,  5, 7, 10]
+# test some riks points
+contrast_values = [-10, -5, 5, 7, 10]
 brightness_values = [-10, -5, 5, 7, 10]
+histeq_values = [True, True, True, True, True]
+param_list = [[10, 10, 10, 5, 6, 7, 2, 3, 4, 5, -2, -5, -6, -7, -2, 10, 6, 4],
+              [5, 0, 1, 10, 10, -1, -2, -5, -9, 2, 2, 5, 6, 7, 2, -10, 6, -4],
+              [10, 10, 10, 5, 6, 7, 2, 3, 4, 5, -2, -5, -6, -7, -2, 10, 6, 4],
+              [10, 10, 10, 5, 6, 7, 2, 3, 4, 5, -2, -5, -6, -7, -2, 10, 6, 4],
+              [10, 10, 10, 5, 6, 7, 2, 3, 4, 5, -2, -5, -6, -7, -2, 10, 6, 4]]
 
-parameter_combinations = product(contrast_values, brightness_values)
+parameter_combinations = product(contrast_values, brightness_values, histeq_values)
 
-for contrast_p, brightness_p in parameter_combinations:
+for contrast_p, brightness_p, histeq_p, param_list_p in parameter_combinations:
 
     # function_test
     image_1 = brightness(brightness_p, image_0)
     image_2 = contrast(contrast_p, image_1)
+    image_3 = histeq(histeq_p, image_2)
+    image_4 = hsl(param_list_p, img=image_3)
 
     # encoding_test
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
-    success, encoded_image = cv2.imencode('.jpeg', image_2, encode_param)
+    success, encoded_image = cv2.imencode('.jpeg', image_4, encode_param)
 
     if success:
         pass
