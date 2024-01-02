@@ -5,9 +5,22 @@ import SPControllerModule from "../components/SPControllerModule";
 import { Typography } from "antd";
 import { ParameterContext, Parameter_Dict } from "../types/interfaces";
 const { Title, Paragraph } = Typography;
-
+type Point = {
+  x: number;
+  y: number;
+};
 const ProcessPage: React.FC = () => {
   var parameter: Parameter_Dict = {
+    dotext: false,
+    exposure_contrast: 0,
+    exposure_brightness: 0,
+    beauty: false,
+    histeq: false,
+    left_turn: false,
+    right_turn: false,
+    text: "",
+    position: [],
+    hsl: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     crop: false,
     hue: 0,
     smooth: 0,
@@ -17,9 +30,40 @@ const ProcessPage: React.FC = () => {
     brightness: 0,
     contrast: 0,
     crop_arg: [0, 0, 100, 100],
+    r_curve: [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1],
+    g_curve: [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1],
+    b_curve: [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1],
   };
-  const [isPreviewText, setIsPreviewText] = useState(false);
+  const [r_curve, setR_curve] = useState<Point[]>([
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ]);
+  const [g_curve, setG_curve] = useState<Point[]>([
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ]);
+  const [b_curve, setB_curve] = useState<Point[]>([
+    { x: 0, y: 0 },
+    { x: 0.25, y: 0.25 },
+    { x: 0.75, y: 0.75 },
+    { x: 1, y: 1 },
+  ]);
+  const [beauty, setBeauty] = useState(false);
+  const [histeq, setHisteq] = useState(false);
+  const [left_turn, setLeft_turn] = useState(false);
+  const [right_turn, setRight_turn] = useState(false);
+  const [position, setPosition] = useState([0, 0]);
+  const [hsl, setHsl] = useState([
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ]);
+  const [exposure_contrast, setExposure_contrast] = useState(0);
+  const [exposure_brightness, setExposure_brightness] = useState(0);
   const [isPreviewCrop, setIsPreviewCrop] = useState(false);
+  const [isPreviewText, setIsPreviewText] = useState(false);
   const [crop, setCrop] = useState(false);
   const [dotext, setDotext] = useState(false);
   const [text, setText] = useState("");
@@ -28,7 +72,7 @@ const ProcessPage: React.FC = () => {
   const [temperature, setTemperature] = useState(0);
   const [sharp, setSharp] = useState(0);
   const [saturation, setSaturation] = useState(0);
-  const [brightness, setExposure] = useState(0);
+  const [brightness, setBrightness] = useState(0);
   const [contrast, setContrast] = useState(0);
   const [crop_arg, serCrop_arg] = useState([0, 0, 100, 100]);
   const [md5, setMd5] = useState<string>("");
@@ -46,7 +90,7 @@ const ProcessPage: React.FC = () => {
     } else {
       sendRequest();
     }
-  }, [crop]);
+  }, [crop, r_curve, g_curve, b_curve, dotext]);
   const sendRequest = () => {
     parameter.brightness = brightness;
     parameter.contrast = contrast;
@@ -57,6 +101,20 @@ const ProcessPage: React.FC = () => {
     parameter.temperature = temperature;
     parameter.crop_arg = crop_arg;
     parameter.crop = crop;
+    parameter.exposure_brightness = exposure_brightness;
+    parameter.exposure_contrast = exposure_contrast;
+    parameter.hsl = hsl;
+    parameter.position = position;
+    parameter.dotext = dotext;
+    parameter.text = text;
+    for (let i = 0; i < 4; i++) {
+      parameter.r_curve[2 * i] = r_curve[i].x;
+      parameter.r_curve[2 * i + 1] = 1 - r_curve[i].y;
+      parameter.g_curve[2 * i] = g_curve[i].x;
+      parameter.g_curve[2 * i + 1] = 1 - g_curve[i].y;
+      parameter.b_curve[2 * i] = b_curve[i].x;
+      parameter.b_curve[2 * i + 1] = 1 - b_curve[i].y;
+    }
     console.log(crop);
     fetch(`http://127.0.0.1:8000/api/image_operation/${md5}`, {
       method: "POST",
@@ -78,6 +136,18 @@ const ProcessPage: React.FC = () => {
       {" "}
       <ParameterContext.Provider
         value={{
+          beauty,
+          hsl,
+          text,
+          exposure_brightness,
+          exposure_contrast,
+          histeq,
+          left_turn,
+          right_turn,
+          r_curve,
+          g_curve,
+          b_curve,
+          position,
           crop,
           dotext,
           isPreviewText,
@@ -90,7 +160,7 @@ const ProcessPage: React.FC = () => {
           brightness,
           contrast,
           crop_arg,
-          setExposure,
+          setBrightness,
           setContrast,
           sendRequest,
           serCrop_arg,
@@ -103,6 +173,18 @@ const ProcessPage: React.FC = () => {
           setIsPreviewCrop,
           setCrop,
           setDotext,
+          setR_curve,
+          setG_curve,
+          setB_curve,
+          setExposure_contrast,
+          setExposure_brightness,
+          setBeauty,
+          setHisteq,
+          setLeft_turn,
+          setRight_turn,
+          setText,
+          setPosition,
+          setHsl,
         }}>
         <Box
           sx={{
@@ -114,7 +196,7 @@ const ProcessPage: React.FC = () => {
           }}>
           <Container
             style={{
-              maxWidth: "90%",
+              maxWidth: "100%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -148,7 +230,7 @@ const ProcessPage: React.FC = () => {
                   }}>
                   <SPControllerModule md5={md5} onMd5Change={ReceivingMd5} />
                 </Paper>
-                <Box sx={{ maxWidth: "25%" }}>
+                <Box sx={{ maxWidth: "35%" }}>
                   <Box
                     sx={{
                       position: "relative",
@@ -181,6 +263,20 @@ const ProcessPage: React.FC = () => {
                           bottom: `${crop_arg[1]}%`,
                           backgroundColor: "rgba(188, 255, 255, 0.5)",
                           borderRadius: "10px",
+                        }}></div>
+                    )}
+                    {isPreviewText && (
+                      <div
+                        style={{
+                          content: '""',
+                          position: "absolute",
+                          top: `${position[1]}%`,
+                          left: `${position[0]}%`,
+                          right: `${100 - (position[0] + 2)}%`,
+                          bottom: `${100 - (position[1] + 2)}%`,
+                          backgroundColor: "rgba(255, 255, 0, 1)",
+                          borderRadius: "50px",
+                          boxShadow: "1 2 20px rgba(0, 0, 0, 9)",
                         }}></div>
                     )}
                   </Box>
