@@ -136,6 +136,7 @@ const ProcessPage: React.FC = () => {
       {" "}
       <ParameterContext.Provider
         value={{
+          imageurl,
           beauty,
           hsl,
           text,

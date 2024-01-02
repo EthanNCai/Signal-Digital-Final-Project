@@ -18,6 +18,7 @@ import { text } from "stream/consumers";
 import { useState, ChangeEvent } from "react";
 const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
   const {
+    imageurl,
     crop,
     dotext,
     isPreviewText,
@@ -30,6 +31,8 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     setCrop,
     setDotext,
     setText,
+    setLeft_turn,
+    setRight_turn,
     sendRequest,
     position,
     setPosition,
@@ -65,6 +68,21 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     outputnumber[1] = modifiesNumber;
     outputnumber[0] = position[0];
     setPosition(outputnumber);
+  };
+  const handelDownload = () => {
+    fetch("blob:http://localhost:3000/707dce30-3fe3-4fd5-924d-607b1fee0df8")
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "file";
+        a.click();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Download error:", error);
+      });
   };
 
   const handleText = (event: ChangeEvent<HTMLInputElement>) => {
@@ -186,7 +204,7 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
           <IconButton>
             <Home />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handelDownload}>
             <Download />
           </IconButton>
           <IconButton>

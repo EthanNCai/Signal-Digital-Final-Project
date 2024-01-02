@@ -36,6 +36,7 @@ type Point = {
   y: number;
 };
 type ParameterContextType = {
+  imageurl: string;
   r_curve: Point[];
   g_curve: Point[];
   b_curve: Point[];
@@ -105,6 +106,7 @@ export const ParameterContext = createContext<ParameterContextType>({
     { x: 0.75, y: 0.75 },
     { x: 1, y: 1 },
   ],
+  imageurl: "",
   dotext: false,
   crop: false,
   isPreviewText: false,
