@@ -213,7 +213,7 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
             sx={{ margin: "5px" }}
             variant="contained"
             onClick={handleBeautyToggle}>
-            自动美颜
+            {beauty ? "取消" : "自动美颜"}
           </Button>
           <ButtonGroup>
             <Button variant="outlined" onClick={handleRightTurnToggle}>
