@@ -6,6 +6,31 @@ from django.http import HttpResponseNotFound, HttpResponse, HttpResponseNotAllow
 from .classes import TargetImage, ImageFactory
 import json
 
+def download_image(request, md5):
+    if request.method == 'POST':
+        try:
+            file = request.FILES['image']
+            file_name = file.name
+            raw_request_data = request.body.decode('utf-8')
+            parameter_dict = json.loads(raw_request_data)
+            # generate instances
+            image_obj = TargetImage(md5)
+            image_factory = ImageFactory(parameter_dict)
+
+            # modify image according to parameter dictionary
+            image_obj.image = image_factory.run(image_obj.image)
+
+            # gathering output materials
+            image_byte = image_obj.get_byte_flow_image()
+            content_type = image_obj.image_extension
+            response = HttpResponse(image_byte, content_type="image/" + content_type[1:])
+            response =  response['Content-Disposition'] = f'attachment; filename={file_name}'
+            return response
+
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest("Invalid JSON data")
+
+    return HttpResponseNotAllowed(['POST'])
 
 def upload_image(request):
     if request.method == 'POST' and request.FILES.get('image'):
