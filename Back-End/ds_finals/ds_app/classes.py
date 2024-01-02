@@ -137,7 +137,12 @@ class ImageFactory:
         
         img_float = image.astype(float)
 
-        adjusted_image = np.clip((img_float - 128) * (contrast+10)/20 * 2 + 128, 0, 255).astype(np.uint8)
+        contrast = (contrast+10)/20 * 2
+
+        if contrast == 0:
+            contrast = 0.1
+        
+        adjusted_image = np.clip((img_float - 128) * contrast + 128, 0, 255).astype(np.uint8)
 
         return adjusted_image
     
