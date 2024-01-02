@@ -97,11 +97,17 @@ class Face:
 
         self.real_face = cv2.bitwise_and(self.face, self.face, mask=(mask_resized * 255).astype(np.uint8))
         
-        return self.real_face
+        return mask_resized
     
     # Beauty Face
     def beauty_face(self):
-        return self.real_face
+        
+        alpha = 1.2  # 亮度增益
+        beta = 15    # 对比度增益
+        self.beautied_face = cv2.convertScaleAbs(self.real_face, alpha=alpha, beta=beta)
+        self.beautied_face = cv2.GaussianBlur(self.beautied_face, (0, 0), 1)
+
+        return self.beautied_face
     
 
 class Point:
@@ -201,7 +207,7 @@ class ImageFactory:
         if self.parameter_dict['crop']:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         if self.parameter_dict['beauty']:
-            image = self.apply_beauty_filter(self.parameter_dict['beauty'], image)
+            image = self.beauty(self.parameter_dict['beauty'], image)
 
         return image
 
@@ -506,12 +512,6 @@ class ImageFactory:
 
                 model = face.load_deep_lab_model().to(device)
 
-                # 分割
-                face_seg = face.segment_face(model)
-
-                # 调用美颜API
-                face_beauty = face.beauty_face()
-
                 image = cv2.rectangle(
                     image,
                     (face_pos[0], face_pos[1]),
@@ -521,7 +521,13 @@ class ImageFactory:
                     cv2.LINE_AA
                 )
 
-                # 替换原始图像中的人脸区域
-                image[face_pos[1]:(face_pos[1] + face_pos[3]), face_pos[0]:(face_pos[0] + face_pos[2])] = face_beauty
+                mask = face.segment_face(model)
 
+                face_beauty = face.beauty_face()
+
+                expanded_mask = mask[:, :, np.newaxis]
+
+                image[face_pos[1]:(face_pos[1] + face_pos[3]), face_pos[0]:(face_pos[0] + face_pos[2])] = \
+                    image[face_pos[1]:(face_pos[1] + face_pos[3]), face_pos[0]:(face_pos[0] + face_pos[2])] * (1 - expanded_mask) + face_beauty * expanded_mask
+            
             return image
