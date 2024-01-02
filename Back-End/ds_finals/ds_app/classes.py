@@ -106,10 +106,9 @@ class ImageFactory:
             '0' is the default value of the exposure operation, that
              means user did not touch this operation, so we just skip it
         """
+
         if self.parameter_dict['histeq'] != 0:
             image = self.histeq(self.parameter_dict['histeq'], image)
-        if self.parameter_dict['crop']:
-            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         if self.parameter_dict['exposure_contrast'] != 0 or self.parameter_dict['exposure_brightness'] != 0:
             image = self.exposure(self.parameter_dict['exposure_contrast'], self.parameter_dict['exposure_brightness'],
                                   image)
@@ -145,6 +144,7 @@ class ImageFactory:
                               self.parameter_dict['position'], image)
         if self.parameter_dict['crop']:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+
         return image
 
     @staticmethod
@@ -203,13 +203,19 @@ class ImageFactory:
         # TODO: Crop the image by crop and crop_arg, which is a bool and [left, bottom, right, top]
         if crop:
             height, width, _ = image.shape
+            print(crop_arg)
+            x1 = crop_arg[0]
+            y1 = crop_arg[1]
+            x2 = crop_arg[2]
+            y2 = crop_arg[3]
+            # x1 < x2
+            # y1 < y2
+            left = int(x1 * width / 100)
+            right = int(x2 * width / 100)
+            bottom = int((100-y1) * height / 100)
+            top = int((100-y2) * height / 100)
 
-            left = int(crop_arg[0] * width / 100)
-            bottom = int(crop_arg[1] * height / 100)
-            right = int(crop_arg[2] * width / 100)
-            top = int(crop_arg[3] * height / 100)
-
-            image = image[bottom:top, left:right].copy()
+            image = image[top:bottom, left:right]
 
         return image
 
