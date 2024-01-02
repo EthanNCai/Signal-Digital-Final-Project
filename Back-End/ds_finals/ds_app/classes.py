@@ -2,13 +2,17 @@ import os
 import cv2
 import numpy as np
 from pathlib import Path
+import torchvision.transforms as transforms
+from torchvision import models
+import torch.nn.functional as F
+import torch
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[2]  # root directory
 FONT = ROOT / 'font'
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 image_extensions = ['.png', '.jpeg', '.jpg']
-
 
 def calculate_bezier_point(P0, P1, P2, P3, t):
     u = 1 - t
@@ -22,6 +26,59 @@ def calculate_bezier_point(P0, P1, P2, P3, t):
 
     return Point(x, y)
 
+class Face:
+    def __init__(self, img):
+        self.img = img  # Origin Image
+        self.face = None # face
+        self.face_pos = None # face position
+        self.real_face = None # face after seg
+        self.beautied_face = None # face after beauty
+
+    # Load DeepLabV3 ✔
+    def load_deep_lab_model():
+        model = models.segmentation.deeplabv3_resnet101(pretrained=True)
+        return model.eval()
+
+    # Detect Face ✔
+    def detect_faces(self):
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        self.face_pos = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+        if len(self.face_pos) == 0:
+            return None, ()
+        else:
+            (x, y, w, h) = self.face_pos[0]
+            self.face = self.img[y:y + h, x:x + w]
+            return self.face, self.face_pos[0]
+
+    # Segment Face
+    def segment_face(self, model):
+
+        h, w, _ = self.face.shape
+
+        transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+        ])
+        
+        face_tensor = transform(self.face).unsqueeze(0).to(device)
+
+        with torch.no_grad():
+            output = model(face_tensor)['out'][0]
+            
+        mask = (output.argmax(0) > 0).float().unsqueeze(0).unsqueeze(0)
+
+        mask_resized = F.interpolate(mask, size=(int(h), int(w)), mode='nearest').squeeze().cpu().numpy()
+
+        self.real_face = cv2.bitwise_and(self.face, self.face, mask=(mask_resized * 255).astype(np.uint8))
+        
+        return self.real_face
+    
+    # Beauty Face
+    def beauty_face(self):
+        return self.real_face
+    
 
 class Point:
     def __init__(self, x, y):
@@ -111,6 +168,8 @@ class ImageFactory:
             image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
         if self.parameter_dict['crop']:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
+        if self.parameter_dict['beauty']:
+            image = self.apply_beauty_filter(self.parameter_dict['beauty'], image)
         return image
 
     @staticmethod
@@ -326,3 +385,41 @@ class ImageFactory:
         adjusted_image = cv2.merge((adjusted_blue_channel, adjusted_green_channel, adjusted_red_channel))
         adjusted_image = adjusted_image.astype(np.uint8)
         return adjusted_image
+
+
+    # 美颜
+    def apply_beauty_filter(beauty, image):
+
+        face = Face(image)
+
+        face_det, face_pos = face.detect_faces()
+
+        lw = max(round(sum(image.shape) / 2 * 0.003), 2)
+
+        if face_det == None:
+
+            return False
+            
+        else:
+
+            model = face.load_deep_lab_model().to(device)
+
+            # 分割
+            face_seg = face.segment_face(model)
+
+            # 调用美颜API
+            face_beauty = face.beauty_face()
+
+            image = cv2.rectangle(
+                image,
+                (face_pos[0], face_pos[1]),
+                (face_pos[0] + face_pos[3], face_pos[1] + face_pos[4]),
+                (75, 25, 230),
+                lw,
+                cv2.LINE_AA
+            )
+
+            # 替换原始图像中的人脸区域
+            image[face_pos[1]:(face_pos[1] + face_pos[4]), face_pos[0]:(face_pos[0] + face_pos[3])] = face_beauty
+
+        return image

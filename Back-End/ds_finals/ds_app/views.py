@@ -24,7 +24,7 @@ def download_image(request, md5):
             image_byte = image_obj.get_byte_flow_image()
             content_type = image_obj.image_extension
             response = HttpResponse(image_byte, content_type="image/" + content_type[1:])
-            response =  response['Content-Disposition'] = f'attachment; filename={file_name}'
+            response['Content-Disposition'] = f'attachment; filename={file_name}'
             return response
 
         except json.JSONDecodeError:
