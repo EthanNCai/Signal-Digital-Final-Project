@@ -136,8 +136,10 @@ class ImageFactory:
                 or self.parameter_dict['b_curve'] != [0, 0, 0.25, 0.25, 0.75, 0.75, 1, 1]):
             image = self.curve(self.parameter_dict['r_curve'], self.parameter_dict['g_curve'],
                                self.parameter_dict['b_curve'], image)
-        # if self.parameter_dict['dotext'] != False:
-        #    image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
+        if self.parameter_dict['dotext']:
+            image = self.text(self.parameter_dict['dotext'] ,self.parameter_dict['text'], self.parameter_dict['position'], image)
+        if self.parameter_dict['crop']:
+            image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         return image
 
 
@@ -344,7 +346,7 @@ class ImageFactory:
             x -= text_width // 2
             y -= text_height // 2
 
-            cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (75, 25, 230), 2)
+            cv2.putText(image, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 5, (75, 25, 230), 10)
 
         return image
 
