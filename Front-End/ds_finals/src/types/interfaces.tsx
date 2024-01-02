@@ -10,8 +10,8 @@ export interface Parameter_Dict {
   exposure_brightness: number;
   beauty: boolean;
   histeq: boolean;
-  left_turn: false;
-  right_turn: false;
+  left_turn: boolean;
+  right_turn: boolean;
   text: string;
   dotext: boolean;
   position: number[];

@@ -25,15 +25,20 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     isPreviewCrop,
     crop_arg,
     text,
+    histeq,
     serCrop_arg,
     setIsPreviewText,
     setIsPreviewCrop,
     setCrop,
     setDotext,
+    left_turn,
+    right_turn,
     setText,
     setLeft_turn,
     setRight_turn,
     sendRequest,
+    setHisteq,
+    beauty,
     position,
     setPosition,
   } = useContext(ParameterContext);
@@ -69,8 +74,21 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     outputnumber[0] = position[0];
     setPosition(outputnumber);
   };
+
+  const handleHiseqToggle = () => {
+    setHisteq(!histeq);
+  };
+  const handleLeftTurnToggle = () => {
+    setLeft_turn(!left_turn);
+  };
+  const handleRightTurnToggle = () => {
+    setRight_turn(!right_turn);
+  };
+  const handleBeautyToggle = () => {
+    setHisteq(!beauty);
+  };
   const handelDownload = () => {
-    fetch("blob:http://localhost:3000/707dce30-3fe3-4fd5-924d-607b1fee0df8")
+    fetch(imageurl)
       .then((response) => response.blob())
       .then((blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -185,15 +203,25 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
           </Button>
         </Box>
         <Box sx={{ marginTop: "20px" }}>
-          <Button sx={{ margin: "5px" }} variant="contained">
-            直方图均衡化
+          <Button
+            sx={{ margin: "5px" }}
+            variant="contained"
+            onClick={handleHiseqToggle}>
+            {histeq ? "取消" : "直方图均衡化"}
           </Button>
-          <Button sx={{ margin: "5px" }} variant="contained">
+          <Button
+            sx={{ margin: "5px" }}
+            variant="contained"
+            onClick={handleBeautyToggle}>
             自动美颜
           </Button>
           <ButtonGroup>
-            <Button variant="outlined">左转</Button>
-            <Button variant="outlined">右转</Button>
+            <Button variant="outlined" onClick={handleRightTurnToggle}>
+              {right_turn ? "取消左转" : "左转"}
+            </Button>
+            <Button variant="outlined" onClick={handleLeftTurnToggle}>
+              {left_turn ? "取消右转" : "右转"}{" "}
+            </Button>
           </ButtonGroup>
         </Box>
         <Box sx={{ marginTop: "10px" }}>
