@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from pathlib import Path
-from ds_finals.ds_app.classes import Face
 import torchvision.transforms as transforms
 from torchvision import models
 import torch.nn.functional as F
@@ -12,42 +11,95 @@ ROOT = FILE.parents[1]  # root directory
 FONT = ROOT / 'font'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+class Face:
+    def __init__(self, img):
+        self.img = img  # Origin Image
+        self.face = None # face
+        self.face_pos = None # face position
+        self.real_face = None # face after seg
+        self.beautied_face = None # face after beauty
+
+    # Load DeepLabV3 ✔
+    def load_deep_lab_model(self):
+        model = models.segmentation.deeplabv3_resnet101(pretrained=True)
+        return model.eval()
+
+    # Detect Face ✔
+    def detect_faces(self):
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        self.face_pos = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+        if len(self.face_pos) == 0:
+            return None, ()
+        else:
+            (x, y, w, h) = self.face_pos[0]
+            self.face = self.img[y:y + h, x:x + w]
+            return self.face, self.face_pos[0]
+
+    # Segment Face 打勾
+    def segment_face(self, model):
+
+        h, w, _ = self.face.shape
+
+        transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+        ])
+        
+        face_tensor = transform(self.face).unsqueeze(0).to(device)
+
+        with torch.no_grad():
+            output = model(face_tensor)['out'][0]
+            
+        mask = (output.argmax(0) > 0).float().unsqueeze(0).unsqueeze(0)
+
+        mask_resized = F.interpolate(mask, size=(int(h), int(w)), mode='nearest').squeeze().cpu().numpy()
+
+        self.real_face = cv2.bitwise_and(self.face, self.face, mask=(mask_resized * 255).astype(np.uint8))
+        
+        return self.real_face
+    
+    # Beauty Face
+    def beauty_face(self):
+        return self.real_face
+    
 # 美颜
 def apply_beauty_filter(beauty, image):
+    if beauty:
+        face = Face(image)
 
-    face = Face(image)
+        face_det, face_pos = face.detect_faces()
 
-    face_det, face_pos = face.detect_faces()
+        lw = max(round(sum(image.shape) / 2 * 0.003), 2)
 
-    lw = max(round(sum(image.shape) / 2 * 0.003), 2)
+        if face_det is None:
 
-    if face_det == None:
+            return False
+            
+        else:
 
-        return False
-        
-    else:
+            model = face.load_deep_lab_model().to(device)
 
-        model = face.load_deep_lab_model().to(device)
+            # 分割
+            face_seg = face.segment_face(model)
 
-        # 分割
-        face_seg = face.segment_face(model)
+            # 调用美颜API
+            face_beauty = face.beauty_face()
 
-        # 调用美颜API
-        face_beauty = face.beauty_face()
+            image = cv2.rectangle(
+                image,
+                (face_pos[0], face_pos[1]),
+                (face_pos[0] + face_pos[2], face_pos[1] + face_pos[3]),
+                (75, 25, 230),
+                lw,
+                cv2.LINE_AA
+            )
 
-        image = cv2.rectangle(
-            image,
-            (face_pos[0], face_pos[1]),
-            (face_pos[0] + face_pos[3], face_pos[1] + face_pos[4]),
-            (75, 25, 230),
-            lw,
-            cv2.LINE_AA
-        )
+            # 替换原始图像中的人脸区域
+            image[face_pos[1]:(face_pos[1] + face_pos[3]), face_pos[0]:(face_pos[0] + face_pos[2])] = face_beauty
 
-        # 替换原始图像中的人脸区域
-        image[face_pos[1]:(face_pos[1] + face_pos[4]), face_pos[0]:(face_pos[0] + face_pos[3])] = face_beauty
-
-    return image
+        return image
 
 def contrast(factor, image):
     # TODO: Add contrast logic here using the 'factor' parameter

@@ -14,6 +14,29 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 image_extensions = ['.png', '.jpeg', '.jpg']
 
+def _hsl(adjust_list, img):
+    h_factor = adjust_list[0]
+    s_factor = adjust_list[1]
+    l_factor = adjust_list[2]
+    img_hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+    h, l, s = cv2.split(img_hls)
+    h_t = (h + h_factor - 2) % 180
+    l_t = np.clip(cv2.add(l, l_factor), 0, 255)
+    s_t = np.clip(cv2.add(s, s_factor), 0, 255)
+    img_ad_t = cv2.merge((h_t.astype(np.uint8), l_t, s_t))
+
+    return img_ad_t
+
+
+def _adjust_and_replace_color(lower, upper, img, adjust_list):
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(img_hsv, lower, upper)
+    img_color = cv2.bitwise_and(img, img, mask=mask)
+    img_hsl = _hsl(adjust_list, img_color)
+    img_color = cv2.cvtColor(img_hsl, cv2.COLOR_HLS2BGR)
+    img[mask > 0] = img_color[mask > 0]
+
+    return img
 
 def calculate_bezier_point(P0, P1, P2, P3, t):
     u = 1 - t
@@ -36,7 +59,7 @@ class Face:
         self.beautied_face = None # face after beauty
 
     # Load DeepLabV3 ✔
-    def load_deep_lab_model():
+    def load_deep_lab_model(self):
         model = models.segmentation.deeplabv3_resnet101(pretrained=True)
         return model.eval()
 
@@ -52,7 +75,7 @@ class Face:
             self.face = self.img[y:y + h, x:x + w]
             return self.face, self.face_pos[0]
 
-    # Segment Face 打勾
+    # Segment Face ✔
     def segment_face(self, model):
 
         h, w, _ = self.face.shape
@@ -179,7 +202,7 @@ class ImageFactory:
             image = self.crop(self.parameter_dict['crop'], self.parameter_dict['crop_arg'], image)
         if self.parameter_dict['beauty']:
             image = self.apply_beauty_filter(self.parameter_dict['beauty'], image)
-            
+
         return image
 
     @staticmethod
@@ -466,8 +489,8 @@ class ImageFactory:
         return adjusted_image
 
 
-    # 美颜
-    def apply_beauty_filter(beauty, image):
+    @staticmethod
+    def beauty(beauty, image):
         if beauty:
             face = Face(image)
 
@@ -475,7 +498,7 @@ class ImageFactory:
 
             lw = max(round(sum(image.shape) / 2 * 0.003), 2)
 
-            if face_det == None:
+            if face_det is None:
 
                 return False
                 
@@ -492,13 +515,13 @@ class ImageFactory:
                 image = cv2.rectangle(
                     image,
                     (face_pos[0], face_pos[1]),
-                    (face_pos[0] + face_pos[3], face_pos[1] + face_pos[4]),
+                    (face_pos[0] + face_pos[2], face_pos[1] + face_pos[3]),
                     (75, 25, 230),
                     lw,
                     cv2.LINE_AA
                 )
 
                 # 替换原始图像中的人脸区域
-                image[face_pos[1]:(face_pos[1] + face_pos[4]), face_pos[0]:(face_pos[0] + face_pos[3])] = face_beauty
+                image[face_pos[1]:(face_pos[1] + face_pos[3]), face_pos[0]:(face_pos[0] + face_pos[2])] = face_beauty
 
             return image

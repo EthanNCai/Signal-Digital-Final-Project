@@ -21,10 +21,10 @@ def download_image(request, md5):
 
             # gathering output materials
             image_byte = image_obj.get_byte_flow_image()
-            content_type = image_obj.image_extension
-            response = HttpResponse(image_byte, content_type="image/" + content_type[1:])
-            response =  response['Content-Disposition'] = f'attachment; filename={file_name}'
-            return response
+            response = HttpResponse(content_type="image/" + content_type[1:])
+            response['Content-Disposition'] = f'attachment; filename="image.{content_type.split("/")[1]}"'
+
+            response.write(image_byte)
 
         except json.JSONDecodeError:
             return HttpResponseBadRequest("Invalid JSON data")

@@ -1,6 +1,6 @@
 import cv2
 # from functions import brightness, contrast, histeq, hsl
-from functions import brightness, contrast, turn, crop, saturation, hue, temperature, smooth, sharp
+from functions import brightness, contrast, turn, crop, saturation, hue, temperature, smooth, sharp, apply_beauty_filter
 from itertools import product
 from pathlib import Path
 
@@ -69,12 +69,12 @@ hue_values = [3, -10, 10, 5, -7]
 temperature_values = [3, -10, 10, 5, -7]
 smooth_values = [0, 10, 5, 7, 3]
 sharp_values = [0, 10, 5, 7, 3]
-sharp_values = [True, True, True, True, True]
+beauty_values = [True, True, True, True, True]
 
 parameter_combinations = product(contrast_values, brightness_values, turn_values, crop_values, saturation_values,
-                                 hue_values, temperature_values, smooth_values, sharp_values)
+                                 hue_values, temperature_values, smooth_values, sharp_values, beauty_values)
 
-for contrast_p, brightness_p, turn_p, crop_p, saturation_p, hue_p, temperature_p, smooth_p, sharp_p in parameter_combinations:
+for contrast_p, brightness_p, turn_p, crop_p, saturation_p, hue_p, temperature_p, smooth_p, sharp_p, beauty_p in parameter_combinations:
     # function_test
     # <<<<<<< HEAD
     #     image_1 = brightness(brightness_p, image_0)
@@ -91,6 +91,7 @@ for contrast_p, brightness_p, turn_p, crop_p, saturation_p, hue_p, temperature_p
     image_7 = turn(turn_p[0], turn_p[1], image_6)
     image_8 = brightness(brightness_p, image_7)
     image_9 = contrast(contrast_p, image_8)
+    image_10 = apply_beauty_filter(beauty_p, image_9)
 
     # encoding_test
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
