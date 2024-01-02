@@ -15,7 +15,19 @@ import UploadModule from "./UploadModule";
 import { useContext } from "react";
 import { ParameterContext } from "../types/interfaces";
 const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
-  const { crop_arg, serCrop_arg } = useContext(ParameterContext);
+  const {
+    crop,
+    dotext,
+    isPreviewText,
+    isPreviewCrop,
+    crop_arg,
+    serCrop_arg,
+    setIsPreviewText,
+    setIsPreviewCrop,
+    setCrop,
+    setDotext,
+    sendRequest,
+  } = useContext(ParameterContext);
   const handleyChange = (event: Event, newValue: number | number[]) => {
     const modifiedNumber = newValue as number[];
     const outputnumber = [0, 0, 0, 0];
@@ -33,6 +45,21 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
     outputnumber[2] = modifiedNumber[1]; //x2
     outputnumber[3] = crop_arg[3]; //y2
     serCrop_arg(outputnumber);
+  };
+  const handleToggleTextPreview = () => {
+    setIsPreviewText(!isPreviewText);
+  };
+  const handleToggleCrop = () => {
+    setCrop(!crop);
+    if (isPreviewCrop) {
+      setIsPreviewCrop(false);
+    }
+  };
+  const handleToggleDotext = () => {
+    setDotext(!dotext);
+  };
+  const handleToggleCropPreview = () => {
+    setIsPreviewCrop(!isPreviewCrop);
   };
   const xl = crop_arg[0];
   const yl = crop_arg[1];
@@ -64,8 +91,14 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
               max={100}
             />
 
-            <Button variant="contained">应用</Button>
-            <Button>预览裁切</Button>
+            <Button variant="contained" onClick={handleToggleCrop}>
+              {crop ? "取消应用" : "应用"}
+            </Button>
+            <Button
+              color={isPreviewCrop ? "error" : "primary"}
+              onClick={handleToggleCropPreview}>
+              {isPreviewCrop ? "关闭预览" : "预览裁切"}
+            </Button>
           </Box>
 
           <TextField
@@ -90,14 +123,24 @@ const SPControllerModule: React.FC<Md5> = ({ md5, onMd5Change }) => {
             />
           </Box>
 
-          <Button variant="contained" color="warning">
-            应用
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleToggleDotext}>
+            {dotext ? "取消应用" : "应用"}
           </Button>
-          <Button color="warning">预览位置</Button>
+          <Button
+            color={isPreviewText ? "error" : "warning"}
+            onClick={handleToggleTextPreview}>
+            {isPreviewText ? "关闭预览" : "预览文字位置"}
+          </Button>
         </Box>
         <Box sx={{ marginTop: "20px" }}>
           <Button sx={{ margin: "5px" }} variant="contained">
             直方图均衡化
+          </Button>
+          <Button sx={{ margin: "5px" }} variant="contained">
+            自动美颜
           </Button>
           <ButtonGroup>
             <Button variant="outlined">左转</Button>
